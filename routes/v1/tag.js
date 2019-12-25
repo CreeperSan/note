@@ -1,6 +1,11 @@
 const router = require('koa-router')()
+const response = require('./utils/response')
 
-router.prefix('v1/tag')
+router.prefix('/v1/tag')
+
+router.get('/add', async (ctx, next) => {
+    ctx.body = response.success()
+})
 
 router.get('/', async (ctx, next) => {
     await ctx.render('index', {

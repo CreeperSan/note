@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 
-router.prefix('v1/category')
+router.prefix('/v1/category')
 
 router.get('/', async (ctx, next) => {
     await ctx.render('index', {
