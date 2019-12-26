@@ -10,6 +10,25 @@ const category_note_manager = require('./category_note_manager')
 
 let database = null
 
+function _init_databases(database){
+    database.query('create database if not exists ' + config_manager.get_server_database_name() + ';')
+    log.boot('初始化数据库')
+    database.query('use ' + config_manager.get_server_database_name() + ';')
+}
+
+function _init_tables(database){
+    // 检查并初始化数据库表
+    user_manager.init_table(database)
+    tag_manager.init_table(database)
+    category_manager.init_table(database)
+    note_manager.init_table(database)
+    tag_note_manager.init_table(database)
+    category_note_manager.init_table(database)
+    // 设置时区
+    log.database("正在设置时区为 +8:00")
+    database.query("set time_zone = '+8:00';")
+}
+
 module.exports = {
 
     init : function () {
@@ -29,7 +48,7 @@ module.exports = {
         // 建立连接
         log.boot('正在连接至数据库 ' + config_manager.get_server_database_name() + '  ' + config_manager.get_server_database_username() + '@' + config_manager.get_server_database_host())
         database = mysql.createConnection({
-            database : config_manager.get_server_database_name(),
+            // database : config_manager.get_server_database_name(), // 放在后面指定
             host : config_manager.get_server_database_host(),
             user : config_manager.get_server_database_username(),
             password : config_manager.get_server_database_password(),
@@ -41,6 +60,8 @@ module.exports = {
                 throw err
             }else{
                 log.boot('数据库连接成功')
+                _init_databases(database)
+                _init_tables(database)
             }
         })
         // 出错重连
@@ -66,18 +87,6 @@ module.exports = {
                 }
             }
         })
-        // 检查并初始化数据库表
-        user_manager.init_table(database)
-        tag_manager.init_table(database)
-        category_manager.init_table(database)
-        note_manager.init_table(database)
-        tag_note_manager.init_table(database)
-        category_note_manager.init_table(database)
-        // 设置时区
-        log.database("正在设置时区为 +8:00")
-        database.query("set time_zone = '+8:00';")
     },
-
-
 
 }
