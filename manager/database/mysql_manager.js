@@ -24,6 +24,9 @@ function _init_tables(database){
     note_manager.init_table(database)
     tag_note_manager.init_table(database)
     category_note_manager.init_table(database)
+}
+
+function _init_timezone(database){
     // 设置时区
     log.database("正在设置时区为 +8:00")
     database.query("set time_zone = '+8:00';")
@@ -62,6 +65,11 @@ module.exports = {
                 log.boot('数据库连接成功')
                 _init_databases(database)
                 _init_tables(database)
+                _init_timezone(database)
+                log.boot('数据库初始化完成')
+
+                // 测试
+                user_manager.add_user('asd@email.com', '5611100', 'nickname')
             }
         })
         // 出错重连

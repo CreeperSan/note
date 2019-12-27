@@ -4,14 +4,14 @@
 
 const mysql = require('./mysql_manager')
 const log = require('../../utils/log_utils')
-
-const key_database = "category_note"
-
-const key_id = "_id"
-const key_category_id = "category_id"
-const key_note_id = "note_id"
+const category_manager = require('./category_manager')
+const note_manager = require('./note_manager')
 
 module.exports = {
+    TABLE_NAME          : 'category_note',
+    KEY_ID              : '_id',
+    KEY_CATEGORY_ID     : 'category_id',
+    KEY_NOTE_ID         : 'note_id',
 
     init_table : function (database) {
         log.database("正在初始化分类-笔记表")
@@ -20,11 +20,13 @@ module.exports = {
             process.exit(0)
         }
         // 初始化表
-        let sql_query = "CREATE TABLE IF NOT EXISTS " + key_database + "(" +
-            key_id + " INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT ," +
-            key_category_id + " INTEGER UNSIGNED NOT NULL ," +
-            key_note_id + " INTEGER UNSIGNED NOT NULL" +
-            ")"
+        let sql_query = "CREATE TABLE IF NOT EXISTS " + this.TABLE_NAME + "(" +
+            this.KEY_ID + " INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT," +
+            this.KEY_CATEGORY_ID + " INTEGER UNSIGNED NOT NULL," +
+            this.KEY_NOTE_ID + " INTEGER UNSIGNED NOT NULL, " +
+            "foreign key(" + this.KEY_CATEGORY_ID + ") references " + category_manager.TABLE_NAME + "(" + category_manager.KEY_ID + "), "  +
+            "foreign key(" + this.KEY_NOTE_ID + ") references " + note_manager.TABLE_NAME + "(" + note_manager.KEY_ID + ")"  +
+            ") DEFAULT CHARSET=utf8"
 
         log.database(sql_query)
 
