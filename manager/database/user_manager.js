@@ -40,8 +40,13 @@ module.exports = {
             this.KEY_INFOS + ' TEXT' +
             ') DEFAULT CHARSET=utf8'
 
-        log.database(sql_query)
-        sql.query(sql_query)
+        sql.query(sql_query, function(err, result){
+            if(err){
+                log.database('初始化 用户 数据库失败')
+                log.database(sql_query)
+                process.exit(0)
+            }
+        })
 
     },
 
@@ -62,8 +67,10 @@ module.exports = {
         log.database('添加用户 ' + email)
         log.database(sql_query)
 
-        let result = sql.query(sql_query)
-        console.log(result)
+        sql.query(sql_query, function(err, result){
+            console.log(err)
+            console.log(result)
+        })
     },
 
 }

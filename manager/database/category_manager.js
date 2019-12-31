@@ -30,9 +30,13 @@ module.exports = {
             "foreign key(" + this.KEY_USER_ID + ") references " + user_manager.TABLE_NAME + "(" + user_manager.KEY_ID + ")"  +
             ") DEFAULT CHARSET=utf8"
 
-        log.database(sql_query)
-
-        database.query(sql_query)
+        database.query(sql_query, function(err, result){
+            if(err){
+                log.database('初始化 分类 数据库失败')
+                log.database(sql_query)
+                process.exit(0)
+            }
+        })
     }
 
 }
