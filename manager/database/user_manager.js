@@ -65,11 +65,12 @@ module.exports = {
             ')'
 
         log.database('添加用户 ' + email)
-        log.database(sql_query)
 
         sql.query(sql_query, function(err, result){
-            console.log(err)
-            console.log(result)
+            if(err){
+                log.e('添加用户失败')
+                log.e(sql_query)
+            }
         })
     },
 

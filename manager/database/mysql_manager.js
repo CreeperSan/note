@@ -69,7 +69,9 @@ module.exports = {
                 log.boot('数据库初始化完成')
 
                 // 测试
-                user_manager.add_user('asd@email.com', '5611100', 'nickname')
+                // user_manager.add_user('asd@email.com', '5611100', 'nickname')
+                // category_manager.create_category(1, '标签名称', '#ff66ccff', '#ff000000')
+                category_manager.delete_category(1, 2)
             }
         })
         // 出错重连
