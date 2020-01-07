@@ -10,26 +10,51 @@ const category_note_manager = require('./category_note_manager')
 
 let database = null
 
-function _init_databases(database){
-    database.query('create database if not exists ' + config_manager.get_server_database_name() + ';')
-    log.boot('初始化数据库')
-    database.query('use ' + config_manager.get_server_database_name() + ';')
+async function _init_databases(database){
+    return new Promise((resolve, reject) => {
+        database.query('create database if not exists ' + config_manager.get_server_database_name() + ';', (err, result) => {
+            if(err){
+                reject('无法创建数据库')
+            }else{
+                // 创建数据库成功，激活使用此数据库
+                database.query('use ' + config_manager.get_server_database_name() + ';', (err, result) => {
+                    if(err){
+                        reject('无法激活数据库')
+                    }else{
+                        resolve()
+                    }
+                })
+            }
+        })
+    })
 }
 
-function _init_tables(database){
+async function _init_tables(database){
     // 检查并初始化数据库表
-    user_manager.init_table(database)
-    tag_manager.init_table(database)
-    category_manager.init_table(database)
-    note_manager.init_table(database)
-    tag_note_manager.init_table(database)
-    category_note_manager.init_table(database)
+    try{
+        await user_manager.init_table(database)
+        await category_manager.init_table(database)
+        await note_manager.init_table(database)
+        await tag_note_manager.init_table(database)
+        await category_note_manager.init_table(database)
+    }catch(e){
+        log.e('数据库初始化失败，正在退出...')
+        process.exit(0)
+    }
 }
 
-function _init_timezone(database){
+async function _init_timezone(database){
     // 设置时区
-    log.database("正在设置时区为 +8:00")
-    database.query("set time_zone = '+8:00';")
+    return new Promise((resolve, reject) => {
+        log.database("正在设置时区为 +8:00")
+        database.query("set time_zone = '+8:00';", (err, result) => {
+            if(err){
+                reject('设置时区失败')
+            }else{
+                resolve()
+            }
+        })
+    })
 }
 
 module.exports = {
@@ -56,23 +81,29 @@ module.exports = {
             user : config_manager.get_server_database_username(),
             password : config_manager.get_server_database_password(),
         })
-        database.connect({}, (err) => {
+        database.connect({}, async (err) => {
             if (err){
                 log.e('数据库连接失败')
                 log.e(err)
                 throw err
             }else{
                 log.boot('数据库连接成功')
-                _init_databases(database)
-                _init_tables(database)
-                _init_timezone(database)
-                log.boot('数据库初始化完成')
+                try{
+                    log.boot('正在初始化数据库')
+                    await _init_databases(database)
+                    await _init_tables(database)
+                    await _init_timezone(database)
+                    log.boot('数据库初始化完成')
+                }catch(e){
+                    log.e('数据库启动失败, ' + e.toString())
+                    process.exit(0)
+                }
 
                 // 测试
                 // user_manager.add_user('asd@email.com', '5611100', 'nickname')
                 // category_manager.create_category(1, '标签名称', '#ff66ccff', '#ff000000')
                 // category_manager.delete_category(1, 2)
-                user_manager.query_user('asd@email.com', '5611100')
+                // user_manager.query_user('asd@email.com', '5611100')
             }
         })
         // 出错重连
