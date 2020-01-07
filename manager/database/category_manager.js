@@ -69,7 +69,7 @@ module.exports = {
         data[this.KEY_NAME] = '\'' + name + '\''
         data[this.KEY_CREATE_TIME] = 'NOW()'
         data[this.KEY_EXTRA] = JSON.stringify(extra_info)
-        let sql_query = sql_utils.insert(this.TABLE_NAME, data)
+        let sql_query = sql_utils.insert(sql, this.TABLE_NAME, data)
 
         sql.query(sql_query, function(err, result){
             if(err){
@@ -85,12 +85,12 @@ module.exports = {
      * @param {int} _id 要删除的标签id
      */
     delete_category : function(user_id, _id){
-        log.database('删除标签')
+        log.database('删除分类')
 
         let condition = {}
         condition[this.KEY_ID] = _id
         condition[this.KEY_USER_ID] = user_id
-        let sql_query = sql_utils.delete(this.TABLE_NAME, condition)
+        let sql_query = sql_utils.delete(sql, this.TABLE_NAME, condition)
 
         sql.query(sql_query, function(err, result){
             if(err){
@@ -117,7 +117,7 @@ module.exports = {
         let condition = {}
         condition[this.KEY_USER_ID] = user_id
         condition[this.KEY_ID] = _id
-        let sql_query = sql_utils.update(this.TABLE_NAME, data, condition)
+        let sql_query = sql_utils.update(sql, this.TABLE_NAME, data, condition)
 
         sql.query(sql_query, function(err, result){
             if(err){
@@ -125,6 +125,10 @@ module.exports = {
                 log.e(sql_query)
             }
         })
+
+    },
+
+    query : function(page, count){
 
     }
 

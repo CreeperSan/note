@@ -4,6 +4,8 @@
 
 const mysql = require('./mysql_manager')
 const log = require('../../utils/log_utils')
+const sql_utils = require('./../../utils/sql_utils')
+const param_utils = require('./../../utils/param_utils')
 
 let sql = null
 
@@ -73,5 +75,31 @@ module.exports = {
             }
         })
     },
+
+    query_user : function(email, password){
+        const condition = {}
+        if(param_utils.isEmpty(email)){
+            log.e('email为空')
+            return []
+        }
+        if(param_utils.isEmpty(password)){
+            log.e('password为空')
+            return []
+        }
+        condition[this.KEY_EMAIL] = email
+        condition[this.KEY_PASSWORD] = password
+        const sql_query = sql_utils.query(sql, this.TABLE_NAME, 0, 1,'*', condition, this.KEY_ID, false)
+        
+        log.database(sql_query)
+
+        sql.query(sql_query, function(err, result){
+            if(err){
+                log.e('查找用户失败')
+                log.e(sql_query)
+            }else{
+                log.database(JSON.stringify(result))
+            }
+        })
+    }
 
 }

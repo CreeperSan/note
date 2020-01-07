@@ -2,7 +2,7 @@ node_modules
 config
 .idea
 .vs
-package-lock
+package-lock.json
 
 # Logs
 logs

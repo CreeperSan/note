@@ -71,7 +71,8 @@ module.exports = {
                 // 测试
                 // user_manager.add_user('asd@email.com', '5611100', 'nickname')
                 // category_manager.create_category(1, '标签名称', '#ff66ccff', '#ff000000')
-                category_manager.delete_category(1, 2)
+                // category_manager.delete_category(1, 2)
+                user_manager.query_user('asd@email.com', '5611100')
             }
         })
         // 出错重连
