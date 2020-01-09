@@ -2,12 +2,10 @@
 // TABLE : category
 // id, name, create_time, extra
 
-const mysql = require('./mysql_manager')
+const mysql_manager = require('./mysql_manager')
 const log = require('../../utils/log_utils')
 const user_manager = require('./user_manager')
 const sql_utils = require('../../utils/sql_utils')
-
-let sql = null
 
 module.exports = {
     TABLE_NAME      : 'category',
@@ -17,14 +15,13 @@ module.exports = {
     KEY_CREATE_TIME : 'create_time',
     KEY_EXTRA       : 'extra',
 
-    init_table : async function (database) {
+    init_table : async function (connection) {
         return new Promise((resolve, reject) => {
             log.database("正在初始化分类表")
-            if(!database){
+            if(!connection){
                 log.e("数据库尚未连接, 正在退出")
                 process.exit(0)
             }
-            sql = database
             // 初始化表
             let sql_query = "CREATE TABLE IF NOT EXISTS " + this.TABLE_NAME + "(" +
                 this.KEY_ID + " INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT ," +
@@ -35,7 +32,7 @@ module.exports = {
                 "foreign key(" + this.KEY_USER_ID + ") references " + user_manager.TABLE_NAME + "(" + user_manager.KEY_ID + ")"  +
                 ") DEFAULT CHARSET=utf8"
     
-            database.query(sql_query, function(err, result){
+            connection.query(sql_query, function(err, result){
                 if(err){
                     log.database('初始化 分类 数据库失败')
                     log.database(sql_query)
@@ -55,31 +52,38 @@ module.exports = {
      * @param {string} text_color 文字颜色 #ff66ccff 
      * @param {string} background_color 背景颜色 #ff66ccff
      */
-    create_category : function(user_id, name, text_color, background_color){
-        log.database('添加标签 uid:'+user_id+'  name:'+name)
+    create_category : async function(user_id, name, text_color, background_color){
+        return new Promise((resolve, reject) => {
+            const connection = mysql_manager.get_database_connection()
 
-        user_id = user_id.toString()
-        name = name.toString()
-        text_color = text_color.toString()
-        background_color = background_color.toString()
+            log.database('添加标签 uid:'+user_id+'  name:'+name)
 
-        let extra_info = {
-            'text_color' : text_color,
-            'background_color' : background_color
-        }
+            user_id = user_id.toString()
+            name = name.toString()
+            text_color = text_color.toString()
+            background_color = background_color.toString()
 
-        let data = {}
-        data[this.KEY_USER_ID] = '\'' + user_id + '\''
-        data[this.KEY_NAME] = '\'' + name + '\''
-        data[this.KEY_CREATE_TIME] = 'NOW()'
-        data[this.KEY_EXTRA] = JSON.stringify(extra_info)
-        let sql_query = sql_utils.insert(sql, this.TABLE_NAME, data)
-
-        sql.query(sql_query, function(err, result){
-            if(err){
-                log.e("添加标签失败")
-                log.e(sql_query)
+            let extra_info = {
+                'text_color' : text_color,
+                'background_color' : background_color
             }
+
+            let data = {}
+            data[this.KEY_USER_ID] = '\'' + user_id + '\''
+            data[this.KEY_NAME] = '\'' + name + '\''
+            data[this.KEY_CREATE_TIME] = 'NOW()'
+            data[this.KEY_EXTRA] = JSON.stringify(extra_info)
+            let sql_query = sql_utils.insert(connection, this.TABLE_NAME, data)
+
+            connection.query(sql_query, function(err, result){
+                if(err){
+                    log.e("添加标签失败")
+                    log.e(sql_query)
+                    reject(err)
+                }else{
+                    resolve()
+                }
+            })
         })
     },
 
@@ -88,19 +92,26 @@ module.exports = {
      * @param {int} user_id 用户的id
      * @param {int} _id 要删除的标签id
      */
-    delete_category : function(user_id, _id){
-        log.database('删除分类')
+    delete_category : async function(user_id, _id){
+        return new Promise((resolve, reject) => {
+            const connection = mysql_manager.get_database_connection()
 
-        let condition = {}
-        condition[this.KEY_ID] = _id
-        condition[this.KEY_USER_ID] = user_id
-        let sql_query = sql_utils.delete(sql, this.TABLE_NAME, condition)
+            log.database('删除分类')
 
-        sql.query(sql_query, function(err, result){
-            if(err){
-                log.e('删除分类失败')
-                log.e(sql_query)
-            }
+            let condition = {}
+            condition[this.KEY_ID] = _id
+            condition[this.KEY_USER_ID] = user_id
+            let sql_query = sql_utils.delete(connection, this.TABLE_NAME, condition)
+
+            connection.query(sql_query, function(err, result){
+                if(err){
+                    log.e('删除分类失败')
+                    log.e(sql_query)
+                    reject()
+                }else{
+                    resolve()
+                }
+            })
         })
 
     },
@@ -113,26 +124,37 @@ module.exports = {
      * @param {*} text_color 
      * @param {*} background_color 
      */
-    modify_category : function(user_id, _id, name, text_color, background_color){
-        log.database('修改标签')
-    
-        let data = {}
-        data[this.KEY_NAME] = name
-        let condition = {}
-        condition[this.KEY_USER_ID] = user_id
-        condition[this.KEY_ID] = _id
-        let sql_query = sql_utils.update(sql, this.TABLE_NAME, data, condition)
+    modify_category : async function(user_id, _id, name, text_color, background_color){
+        return new Promise((resolve, reject) => {
+            const connection = mysql_manager.get_database_connection()
 
-        sql.query(sql_query, function(err, result){
-            if(err){
-                log.e('更新分类失败')
-                log.e(sql_query)
-            }
+            log.database('修改标签')
+        
+            let data = {}
+            data[this.KEY_NAME] = name
+            let condition = {}
+            condition[this.KEY_USER_ID] = user_id
+            condition[this.KEY_ID] = _id
+            let sql_query = sql_utils.update(connection, this.TABLE_NAME, data, condition)
+
+            connection.query(sql_query, function(err, result){
+                if(err){
+                    log.e('更新分类失败')
+                    log.e(sql_query)
+                    reject()
+                }else{
+                    resolve()
+                }
+            })
         })
 
     },
 
-    query : function(page, count){
+    query : async function(page, count){
+        return new Promise((resolve, reject) => {
+            const connection = mysql_manager.get_database_connection()
+            resolve()
+        })
 
     }
 

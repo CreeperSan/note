@@ -4,8 +4,16 @@ module.exports = {
         return value === null || value === undefined
     },
 
+    isNotNull : function(value){
+        return !this.isNull(value)
+    },
+
     isEmpty : function(value){
-        return self.isNull() || value === ''
+        return this.isNull(value) || value === ''
+    },
+
+    isNotEmpty : function(value){
+        return !this.isEmpty(value)
     },
 
     getOrDefault : function(value, default_value){
@@ -22,6 +30,6 @@ module.exports = {
         }else{
             return true
         }
-    }
+    },
 
 }

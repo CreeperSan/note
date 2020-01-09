@@ -7,9 +7,7 @@ const log = require('../../utils/log_utils')
 const sql_utils = require('./../../utils/sql_utils')
 const param_utils = require('./../../utils/param_utils')
 
-let sql = null
-
-module.exports = {
+module.exports = exports = {
     TABLE_NAME          : 'users',
     KEY_ID              : "_id",
     KEY_PASSWORD        : "password",
@@ -27,9 +25,8 @@ module.exports = {
             if (!database){
                 log.e('数据库尚未连接, 正在退出')
                 process.exit(0)
-                return
+                reject()
             }
-            sql = database
             // 初始化数据库表
             let sql_query = 'CREATE TABLE IF NOT EXISTS ' + this.TABLE_NAME + '(' +
                 this.KEY_ID + ' INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT, ' +
@@ -43,7 +40,7 @@ module.exports = {
                 this.KEY_INFOS + ' TEXT' +
                 ') DEFAULT CHARSET=utf8'
 
-            sql.query(sql_query, function(err, result){
+            database.query(sql_query, function(err, result){
                 if(err){
                     log.database('初始化 用户 数据库失败')
                     log.database(sql_query)
@@ -56,53 +53,63 @@ module.exports = {
 
     },
 
-    add_user : function (email, password, nickname) {
-        // 添加用户
-        let sql_query = 'INSERT INTO ' + this.TABLE_NAME + ' (' +
-            this.KEY_EMAIL + ',' +
-            this.KEY_PASSWORD + ',' +
-            this.KEY_CREATE_TIME + ',' +
-            this.KEY_NICKNAME +
-            ') VALUES (' +
-            '\'' + email + '\',' +
-            '\'' + password + '\',' +
-            'NOW(),' +
-            '\'' + nickname + '\'' +
-            ')'
-
-        log.database('添加用户 ' + email)
-
-        sql.query(sql_query, function(err, result){
-            if(err){
-                log.e('添加用户失败')
-                log.e(sql_query)
-            }
+    add_user : async function (email, password, nickname) {
+        return new Promise((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+            // 添加用户
+            let sql_query = 'INSERT INTO ' + this.TABLE_NAME + ' (' +
+                this.KEY_EMAIL + ',' +
+                this.KEY_PASSWORD + ',' +
+                this.KEY_CREATE_TIME + ',' +
+                this.KEY_NICKNAME +
+                ') VALUES (' +
+                '\'' + email + '\',' +
+                '\'' + password + '\',' +
+                'NOW(),' +
+                '\'' + nickname + '\'' +
+                ')'
+    
+            log.database('添加用户 ' + email)
+    
+            connection.query(sql_query, function(err, result){
+                if(err){
+                    log.e('添加用户失败')
+                    log.e(sql_query)
+                    reject(err)
+                }else{
+                    resolve()
+                }
+            })
         })
     },
 
-    query_user : function(email, password){
-        const condition = {}
-        if(param_utils.isEmpty(email)){
-            log.e('email为空')
-            return []
-        }
-        if(param_utils.isEmpty(password)){
-            log.e('password为空')
-            return []
-        }
-        condition[this.KEY_EMAIL] = email
-        condition[this.KEY_PASSWORD] = password
-        const sql_query = sql_utils.query(sql, this.TABLE_NAME, 0, 1,'*', condition, this.KEY_ID, false)
-        
-        log.database(sql_query)
-
-        sql.query(sql_query, function(err, result){
-            if(err){
-                log.e('查找用户失败')
-                log.e(sql_query)
-            }else{
-                log.database(JSON.stringify(result))
+    query_user : async function(email, password){
+        return new Promise((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+            const condition = {}
+            if(param_utils.isEmpty(email)){
+                log.e('email为空')
+                return []
             }
+            if(param_utils.isEmpty(password)){
+                log.e('password为空')
+                return []
+            }
+            condition[this.KEY_EMAIL] = email
+            condition[this.KEY_PASSWORD] = password
+            const sql_query = sql_utils.query(connection, this.TABLE_NAME, 0, 1,'*', condition, this.KEY_ID, false)
+            
+            log.database(sql_query)
+    
+            connection.query(sql_query, function(err, result){
+                if(err){
+                    log.e('查找用户失败')
+                    log.e(sql_query)
+                    reject(err)
+                }else{
+                    resolve(result)
+                }
+            })
         })
     }
 

@@ -43,8 +43,10 @@ module.exports = {
         })
     },
 
-    add_tags : function(user_id, tag_name, bg_color, text_color){
-        
+    add_tags : async function(user_id, tag_name, bg_color, text_color){
+        return new Promise((resolve, reject) => {
+            resolve()
+        })
     }
 
 }
