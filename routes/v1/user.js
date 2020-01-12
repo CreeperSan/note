@@ -2,6 +2,7 @@ const router = require('koa-router')()
 const log = require('../../utils/log_utils')
 const response = require('./utils/response')
 const param_utils = require('./utils/param')
+const auth = require('./../../manager/auth/auth_manager')
 
 const user_sql = require(process.cwd() + '/manager/database/user_manager')
 require(process.cwd() + '/manager/database/note_manager')
@@ -10,12 +11,12 @@ router.prefix('/v1/user')
 
 router.post('/login', async(ctx, next) => {
     const request_param = ctx.request.body
-
+    // 獲取基本信息
     let email = param_utils.getOrDefault(request_param['email'], '')
     let password = param_utils.getOrDefault(request_param['password'], '')
     let id = param_utils.getOrDefault(ctx.headers['id'], 0)
-    
-    
+    let key = param_utils.getOrDefault(ctx.headers['key'], 0)
+    // 邏輯處理 
     log.i('[登录请求] email:' + email + '  password:' + password + '   id:' + id)
 
     let query_result = await user_sql.query_user(email, password)
@@ -25,12 +26,16 @@ router.post('/login', async(ctx, next) => {
 
     if(param_utils.isNotEmpty(query_result)){
         // 查询到用户存在
-
+        let user_id = query_result[user_sql.KEY_ID]
+        let user_key = ''
+        if(auth.is_auth(id, key)){
+            user_key = key
+        }else{
+            user_key = auth.add_auth(user_id)
+        }
         ctx.body = response.success({
-            'key' : '1d1v32d4413d0a38b',
-            'email' : query_result.email,
-            'password' : query_result.password,
-            'id' : query_result._id
+            'id' : query_result._id,
+            'key' : user_key.toString()
         })
     }else{
         // 没有对应的用户
