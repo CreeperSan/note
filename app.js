@@ -9,10 +9,12 @@ const config_manager = require('./manager/config_manager')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
-const v1_category = require('./routes/v1/category')
-const v1_note = require('./routes/v1/note')
-const v1_tag = require('./routes/v1/tag')
-const v1_user = require('./routes/v1/user')
+const login = require('./routes/login')
+const test = require('./routes/test')
+const v1_category = require('./routes/api/v1/category')
+const v1_note = require('./routes/api/v1/note')
+const v1_tag = require('./routes/api/v1/tag')
+const v1_user = require('./routes/api/v1/user')
 
 // error handler
 onerror(app)
@@ -41,6 +43,8 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(login.routes(), login.allowedMethods())
+app.use(test.routes(), test.allowedMethods())
 app.use(v1_category.routes(), v1_category.allowedMethods())
 app.use(v1_note.routes(), v1_note.allowedMethods())
 app.use(v1_tag.routes(), v1_tag.allowedMethods())

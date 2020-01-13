@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>登錄</title>
+        <link href="/stylesheets/style.css" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/axios/0.19.0/axios.js"></script>
+        <script src="https://cdn.bootcss.com/js-cookie/2.2.1/js.cookie.js"></script>
+    </head>
+    <body>
+        <div style="display:flex;flex-direction:column;">
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <h3>Cookie</h3>
+                <p id="info_user_id"></p>
+                <p id="info_key"></p>
+            </div>
+
+            <!-- 登錄表格 -->
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <h3>登錄</h3>
+                <label style="padding: 8px;">
+                    <span style="padding: 8px 16px;">郵箱</span>
+                    <input id="login_email" type="email" name="email" value="asd@email.com"/>
+                </label>
+                <label style="padding: 8px;">
+                    <span style="padding: 8px 16px;">密碼</span>
+                    <input id="login_password" type="email" name="email" value="5611100"/>
+                </label>
+                <button style="margin: 16px 32px;" onclick="login_click()">登錄</button>
+            </div>
+
+
+            <!-- 標簽列表 -->
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <h3>標簽列表</h3>
+            </div>
+
+
+            <!-- 分類列表 -->
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <h3>分類列表</h3>
+            </div>
+
+
+            <!-- 筆記列表 -->
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <h3>筆記列表</h3>
+            </div>
+
+
+
+
+        </div>
+
+        <script>
+            const COOKIE_USER_ID = "UserID"
+            const COOKIE_KEY = "key"
+
+            function login_click() {
+                let email = document.getElementById('login_email').value
+                let password = document.getElementById('login_password').value
+
+                axios({
+                    method  : 'post',
+                    url     : '/api/v1/user/login',
+                    data    : {
+                        email : email,
+                        password : password,
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    if(response.status === 200 && response.data.code === 200){ // 登陸成功
+                        let data = response.data.data
+                        console.log(data.id)
+                        console.log(data.key)
+                        Cookies.set(COOKIE_USER_ID, data.id)
+                        Cookies.set(COOKIE_KEY, data.key)
+                    }else{ // 登陸失敗
+                        alert(response.statusText)
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                    console.log(error);
+                })
+            }
+
+            // 初始化Cookie
+            document.getElementById('info_user_id').innerText = 'UserID : ' + Cookies.get(COOKIE_USER_ID)
+            document.getElementById('info_key').innerText =  'Key : ' + Cookies.get(COOKIE_KEY)
+        </script>
+    </body>
+</html>

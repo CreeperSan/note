@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 
-router.prefix('/v1/note')
+router.prefix('/api/v1/note')
 
 router.get('/', async (ctx, next) => {
     await ctx.render('index', {

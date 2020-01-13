@@ -1,13 +1,13 @@
 const router = require('koa-router')()
-const log = require('../../utils/log_utils')
-const response = require('./utils/response')
-const param_utils = require('./utils/param')
-const auth = require('./../../manager/auth/auth_manager')
+const log = require('../../../utils/log_utils')
+const response = require('./tools/response')
+const param_utils = require('./tools/param')
+const auth = require('./../../../manager/auth/auth_manager')
 
 const user_sql = require(process.cwd() + '/manager/database/user_manager')
 require(process.cwd() + '/manager/database/note_manager')
 
-router.prefix('/v1/user')
+router.prefix('/api/v1/user')
 
 router.post('/login', async(ctx, next) => {
     const request_param = ctx.request.body
