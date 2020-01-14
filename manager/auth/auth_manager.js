@@ -1,5 +1,5 @@
 // LruCache， Key為UserID, Value為登錄ID
-
+// 记住键值都为字符串！这个是区分类型的！
 function AuthManager(){
     const LurCache = require('lru-cache')
     const UUID = require('uuid')
@@ -14,7 +14,9 @@ function AuthManager(){
 
     return {
         is_auth : function(userID, key){
-            if(auth_cache.has(userID.toString())){
+            userID = userID.toString()
+            key = key.toString()
+            if(auth_cache.has(userID)){
                 let current_time = new Date().getTime()
                 let auth_user_info = auth_cache.get(userID)
                 // 循環所有Key進行比對
@@ -25,7 +27,7 @@ function AuthManager(){
                     if(auth_item_key === key && typeof auth_item_time === 'number' && current_time - auth_item_time < AUTH_TIMEOUT){
                         // 更新時間
                         auth_item[AUTH_TIME] = current_time
-                        auth_cache.set(userID, auth_user_info) 
+                        auth_cache.set(userID, auth_user_info)
                         return true
                     }
                 }
@@ -36,6 +38,7 @@ function AuthManager(){
         },
 
         add_auth : function(userID){
+            userID = userID.toString()
             const key = UUID.v1().toString()
             const current_time = new Date().getTime()
             if(auth_cache.has(userID)){
@@ -59,6 +62,18 @@ function AuthManager(){
                 auth_cache.set(userID, auth_item)
             }
             return key
+        },
+
+        print : function () {
+            let data = []
+            for(let i=0; i<auth_cache.length; i++){
+                let user_id = auth_cache.keys()[i]
+                data.push({
+                    id : user_id,
+                    keys : auth_cache.get(user_id)
+                })
+            }
+            return data
         }
     }
 }

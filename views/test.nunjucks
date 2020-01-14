@@ -27,6 +27,7 @@
                     <input id="login_password" type="email" name="email" value="5611100"/>
                 </label>
                 <button style="margin: 16px 32px;" onclick="login_click()">登錄</button>
+                <button style="margin: 16px 32px;" onclick="login_auth()">验证</button>
             </div>
 
 
@@ -48,6 +49,13 @@
             </div>
 
 
+            <!-- Auth列表 -->
+            <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
+                <button onclick="print_auth()">刷新</button>
+                <p id="auth">尚未刷新</p>
+            </div>
+
+
 
 
         </div>
@@ -55,6 +63,9 @@
         <script>
             const COOKIE_USER_ID = "UserID"
             const COOKIE_KEY = "key"
+
+            const USER_ID = Cookies.get(COOKIE_USER_ID)
+            const KEY = Cookies.get(COOKIE_KEY)
 
             function login_click() {
                 let email = document.getElementById('login_email').value
@@ -83,10 +94,65 @@
                     console.log(error);
                 })
             }
+            function login_auth() {
+                let user_id = Cookies.get(COOKIE_USER_ID)
+                let user_key = Cookies.get(COOKIE_KEY)
+
+                axios({
+                    method  : 'post',
+                    url     : '/api/v1/user/auth',
+                    headers : {
+                        id : user_id,
+                        key : user_key,
+                    }
+                }).then(function (response) {
+                    console.log(response.data);
+                }).catch(function (error) {
+                    alert(error)
+                    console.log(error);
+                })
+            }
+
+            function print_auth(){
+                axios({
+                    method  : 'post',
+                    url     : '/auth',
+                    headers : {
+                        id      : USER_ID,
+                        key     : KEY,
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    let json_str = JSON.stringify(response.data)
+                    document.getElementById('auth').innerText = json_str
+                }).catch(function (error) {
+                    let json_str = JSON.stringify(response)
+                    document.getElementById('auth').innerText = json_str
+                    alert(error)
+                    console.log(error);
+                })
+            }
 
             // 初始化Cookie
+
             document.getElementById('info_user_id').innerText = 'UserID : ' + Cookies.get(COOKIE_USER_ID)
             document.getElementById('info_key').innerText =  'Key : ' + Cookies.get(COOKIE_KEY)
+
+            // 加载tag
+            axios({
+                method  : 'post',
+                url     : '/api/v1/tag/list',
+                headers : {
+                    id      : USER_ID,
+                    key     : KEY,
+                }
+            }).then(function (response) {
+                console.log(response);
+
+            }).catch(function (error) {
+                alert(error)
+                console.log(error);
+            })
         </script>
     </body>
 </html>

@@ -45,6 +45,17 @@ router.post('/login', async(ctx, next) => {
 
 })
 
+router.post('/auth', async (ctx, next) => {
+    const user_id = ctx.headers.id
+    const user_key = ctx.headers.key
+
+    ctx.body = response.success({
+        id : user_id,
+        key : user_key,
+        is_auth : auth.is_auth(user_id, user_key)
+    })
+})
+
 router.get('/', async (ctx, next) => {
     await ctx.render('index', {
         title: 'Hello Koa 2!'
