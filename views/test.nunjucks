@@ -34,6 +34,8 @@
             <!-- 標簽列表 -->
             <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
                 <h3>標簽列表</h3>
+                <div id="tag_div">
+                </div>
             </div>
 
 
@@ -148,7 +150,18 @@
                 }
             }).then(function (response) {
                 console.log(response);
-
+                let tagDiv = document.getElementById('tag_div')
+                if(response.data.code === 200){
+                    let dataStr = 'data : '
+                    let list = response.data.data.list
+                    for(let index in list){
+                        let item = list[index]
+                        dataStr = dataStr + '<br>NAME:' + item.name + '____ID:' + item._id + '______UserID:' + item.user_id
+                    }
+                    tagDiv.innerHTML = dataStr
+                }else{
+                    tagDiv.innerText = response.data.message
+                }
             }).catch(function (error) {
                 alert(error)
                 console.log(error);
