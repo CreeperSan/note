@@ -5,6 +5,7 @@
 const mysql = require('./mysql_manager')
 const log = require('../../utils/log_utils')
 const user_manager = require('./user_manager')
+const sql_utils = require('./../../utils/sql_utils')
 
 module.exports = {
     TABLE_NAME              : 'tag',
@@ -32,12 +33,54 @@ module.exports = {
                 ") DEFAULT CHARSET=utf8"
     
             database.query(sql_query, function(err, result){
+                log.database('err')
+                log.database(JSON.stringify(err))
+                log.database('result')
+                log.database(JSON.stringify(result))
                 if(err){
                     log.e('初始化 标签 数据库失败')
-                    log.e(sql_query);
+                    log.e(sql_query)
                     reject()
                 }else{
                     resolve()
+                }
+            })
+        })
+    },
+
+    query_tags : async function(user_id){
+        return new Promise((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+            const condition_obj = {}
+            condition_obj[this.KEY_USER_ID] = user_id
+            const sql_query = sql_utils.query(connection, this.TABLE_NAME, 0, 100, null, condition_obj, this.KEY_ID, true)
+            log.i(sql_query)
+            connection.query(sql_query, function (err, result) {
+                if(err){
+                    log.e('查询标签列表失败')
+                    log.e(sql_query)
+                    reject()
+                }else{
+                    resolve(result)
+                }
+            })
+        })
+    },
+
+    delete_tag : async function(user_id, tag_id){
+        return new Promise((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+            let condition = {}
+            condition[this.KEY_USER_ID] = user_id
+            condition[this.KEY_ID] = tag_id
+            const sql_query = sql_utils.delete(connection, this.TABLE_NAME, condition)
+            connection.query(sql_query, function (err, result) {
+                if(err){
+                    log.e('删除标签失败')
+                    log.e(sql_query)
+                    reject()
+                }else{
+                    resolve(true)
                 }
             })
         })
@@ -47,6 +90,6 @@ module.exports = {
         return new Promise((resolve, reject) => {
             resolve()
         })
-    }
+    },
 
 }

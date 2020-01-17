@@ -21,8 +21,6 @@ router.post('/login', async(ctx, next) => {
 
     let query_result = await user_sql.query_user(email, password)
     query_result = query_result[0]
-    
-    console.log(JSON.stringify(query_result))
 
     if(param_utils.isNotEmpty(query_result)){
         // 查询到用户存在
