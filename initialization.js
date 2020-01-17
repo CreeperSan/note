@@ -7,12 +7,12 @@ function log(msg){
 
 function action_main(){
     log('                                   ')
-    log('==========   Note初始化   ==========')
+    log('==========   Note Initialization   ==========')
     log('                                   ')
-    log('输入 1 初始化服务配置')
-    log('输入 2 初始化应用配置')
-    log('输入其他退出配置')
-    let action = readline.question('输入您想要的操作 : ')
+    log('Enter "1" for server config initialization')
+    log('Enter "2" for application config initialization')
+    log('Enter other to exit')
+    let action = readline.question('Please enter : ')
     switch(action){
         case '1' : {
             action_server()
@@ -31,50 +31,50 @@ function action_main(){
 }
 
 function action_server(){
-    log('· 服务配置初始化')
+    log('· Server config initialization')
 
-    let tmp_port = readline.question('1. 请输入端口号( ' + config_manager.get_server_port() +' ) : ')
+    let tmp_port = readline.question('1. Please enter server port( ' + config_manager.get_server_port() +' ) : ')
     if('' !== tmp_port){
         config_manager.set_server_port(tmp_port)
     }
 
-    let tmp_address = readline.question('2. 请输入服务器地址( ' + config_manager.get_server_database_host() +' ) : ')
+    let tmp_address = readline.question('2. Please enter server address( ' + config_manager.get_server_database_host() +' ) : ')
     if('' !== tmp_address){
         config_manager.set_server_database_host(tmp_address)
     }
 
-    let tmp_name = readline.question('3. 请输入数据库名称( ' + config_manager.get_server_database_name() +' ) : ')
+    let tmp_name = readline.question('3. Please enter database name( ' + config_manager.get_server_database_name() +' ) : ')
     if('' !== tmp_name){
         config_manager.set_server_database_name(tmp_name)
     }
 
-    let tmp_username = readline.question('4. 请输入数据库用户名( ' + config_manager.get_server_database_username() +' ) : ')
+    let tmp_username = readline.question('4. Please enter MySQL username( ' + config_manager.get_server_database_username() +' ) : ')
     if('' !== tmp_username){
         config_manager.set_server_database_username(tmp_username)
     }
 
-    let tmp_password = readline.question('5. 请输入数据库密码 : ')
-    if('' !== tmp_password){
-        config_manager.set_server_database_password(tmp_password)
-    }
+    let tmp_password = readline.question('5. Please enter MySQL password : ')
+    config_manager.set_server_database_password(tmp_password) // 密码可能为空
+    // if('' !== tmp_password){
+    // }
 
     config_manager.save_server_config()
-    log('服务配置完成')
+    log('Server config finished!')
     action_main()
 }
 
 function action_app(){
-    log('· 应用配置初始化')
-    log('暂无设置可配置')
-    log('应用配置完成')
+    log('· Application config initialization')
+    log('Not supported yet, still developing...')
+    log('Application configuration finished!')
     action_main()
 }
 
 
 
-log('正在加载当前配置...')
+log('Loading configuration...')
 if(!config_manager.init()){
-    log('配置文件出错, 请检查您的配置文件')
+    log('Error happened while loading configuration, please check your configuration file.')
     process.exit(0)
     return
 }

@@ -25,12 +25,13 @@ async function _init_databases(database){
 
 async function _init_tables(database){
     // 检查并初始化数据库表
+    // 此处顺序不能出错，否则见表回收失败，因为对应外键的表和字段不存在
     try{
         await require('./user_manager').init_table(database)
         await require('./category_manager').init_table(database)
         await require('./note_manager').init_table(database)
-        await require('./tag_note_manager').init_table(database)
         await require('./tag_manager').init_table(database)
+        await require('./tag_note_manager').init_table(database)
         await require('./category_note_manager').init_table(database)
     }catch(e){
         log.e(e)
