@@ -4,8 +4,9 @@
         <meta charset="utf-8">
         <title>登錄</title>
         <link href="/stylesheets/style.css" rel="stylesheet">
-        <script src="https://cdn.bootcss.com/axios/0.19.0/axios.js"></script>
-        <script src="https://cdn.bootcss.com/js-cookie/2.2.1/js.cookie.js"></script>
+        <script src="/lib/axios/axios.20200126.js"></script>
+        <script src="/lib/cookie/cookie.20200126.js"></script>
+        <script src="/lib/request/request.20200126.js"></script>
     </head>
     <body>
         <div style="display:flex;flex-direction:column;">
@@ -33,7 +34,7 @@
 
             <!-- 標簽列表 -->
             <div style="display: flex;flex-direction: column;margin: 16px;border: solid 1px black;">
-                <h3>標簽列表</h3>
+                <h3>標簽列表 <a onclick="refresh_tag_list()">刷新</a> <a onclick="add_tag()">新增</a></h3>
                 <div id="tag_div">
                 </div>
             </div>
@@ -69,43 +70,36 @@
             const USER_ID = Cookies.get(COOKIE_USER_ID)
             const KEY = Cookies.get(COOKIE_KEY)
 
-            function login_click() {
+            async function login_click() {
                 let email = document.getElementById('login_email').value
                 let password = document.getElementById('login_password').value
 
-                axios({
-                    method  : 'post',
-                    url     : '/api/v1/user/login',
-                    data    : {
-                        email : email,
-                        password : password,
-                    }
-                }).then(function (response) {
-                    console.log(response);
-                    if(response.status === 200 && response.data.code === 200){ // 登陸成功
-                        let data = response.data.data
-                        console.log(data.id)
-                        console.log(data.key)
-                        Cookies.set(COOKIE_USER_ID, data.id)
-                        Cookies.set(COOKIE_KEY, data.key)
-                    }else{ // 登陸失敗
-                        alert(response.statusText)
-                    }
-                }).catch(function (error) {
-                    alert(error)
-                    console.log(error);
+                let response = await post('/api/v1/user/login', {
+                    email : email,
+                    password : password,
                 })
+                if(response.success){
+                    let data = response.data
+                    console.log(data.id)
+                    console.log(data.key)
+                    Cookies.set(COOKIE_USER_ID, data.id)
+                    Cookies.set(COOKIE_KEY, data.key)
+                }else{
+                    alert('登陆失败')
+                }
             }
-            function login_auth() {
+            async function login_auth() {
                 let user_id = Cookies.get(COOKIE_USER_ID)
                 let user_key = Cookies.get(COOKIE_KEY)
+
+                let response = await post('/api/v1/user/auth')
 
                 axios({
                     method  : 'post',
                     url     : '/api/v1/user/auth',
                     headers : {
                         id : user_id,
-                        key : user_key,
+                        key : user_keyvbcv
                     }
                 }).then(function (response) {
                     console.log(response.data);
@@ -135,37 +129,58 @@
                 })
             }
 
+
+            function refresh_tag_list(){
+                axios({
+                    method  : 'post',
+                    url     : '/api/v1/tag/list',
+                    headers : {
+                        id      : Cookies.get(COOKIE_USER_ID),
+                        key     : Cookies.get(COOKIE_KEY),
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    let tagDiv = document.getElementById('tag_div')
+                    if(response.data.code === 200){
+                        let dataStr = 'data : '
+                        let list = response.data.data.list
+                        for(let index in list){
+                            let item = list[index]
+                            dataStr = dataStr + '<br><a onclick="delete_tag('+item._id+')">删除</a>NAME:' + item.name + '____ID:' + item._id + '______UserID:' + item.user_id
+                        }
+                        tagDiv.innerHTML = dataStr
+                    }else{
+                        tagDiv.innerText = response.data.message
+                    }
+                }).catch(function (error) {
+                    alert(error)
+                    console.log(error);
+                })
+            }
+            function delete_tag(id){
+
+            }
+            async function add_tag(){
+                let tag_name = prompt('输入标签名称')
+                if(!tag_name){
+                    alert('名字输入错误')
+                    return
+                }
+                let response = await post('/api/v1/tag/add', {
+                    name : tag_name
+                })
+                if(response.success){
+                    refresh_tag_list()
+                }else{
+                    console.log('添加失败')
+                }
+            }
+
             // 初始化Cookie
 
             document.getElementById('info_user_id').innerText = 'UserID : ' + Cookies.get(COOKIE_USER_ID)
             document.getElementById('info_key').innerText =  'Key : ' + Cookies.get(COOKIE_KEY)
 
-            // 加载tag
-            axios({
-                method  : 'post',
-                url     : '/api/v1/tag/list',
-                headers : {
-                    id      : USER_ID,
-                    key     : KEY,
-                }
-            }).then(function (response) {
-                console.log(response);
-                let tagDiv = document.getElementById('tag_div')
-                if(response.data.code === 200){
-                    let dataStr = 'data : '
-                    let list = response.data.data.list
-                    for(let index in list){
-                        let item = list[index]
-                        dataStr = dataStr + '<br>NAME:' + item.name + '____ID:' + item._id + '______UserID:' + item.user_id
-                    }
-                    tagDiv.innerHTML = dataStr
-                }else{
-                    tagDiv.innerText = response.data.message
-                }
-            }).catch(function (error) {
-                alert(error)
-                console.log(error);
-            })
         </script>
     </body>
 </html>

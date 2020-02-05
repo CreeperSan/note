@@ -1,6 +1,9 @@
 // DATABASE_TAG
 // TABLE : tag
 // id, user_id, name, create_time, extra
+//
+// extra :  bg:背景颜色
+//          ft:前景颜色
 
 const mysql = require('./mysql_manager')
 const log = require('../../utils/log_utils')
@@ -14,6 +17,8 @@ module.exports = {
     KEY_NAME                : 'name',
     KEY_CREATE_TIME         : 'create_time',
     KEY_EXTRA               : 'extra',
+    EXTRA_BG                : 'bg',
+    EXTRA_FT                : 'ft',
 
     init_table : async function (database) {
         return new Promise((resolve, reject) => {
@@ -88,7 +93,23 @@ module.exports = {
 
     add_tags : async function(user_id, tag_name, bg_color, text_color){
         return new Promise((resolve, reject) => {
-            resolve()
+            const connection = mysql.get_database_connection()
+            let condition = {}
+            condition[this.KEY_USER_ID] = user_id
+            condition[this.KEY_NAME] = connection.escape(tag_name)
+            condition[this.KEY_CREATE_TIME] = 'NOW()'
+            let extra = {}
+            extra[this.EXTRA_BG] = bg_color
+            extra[this.EXTRA_FT] = text_color
+            condition[this.KEY_EXTRA] = connection.escape(JSON.stringify(extra))
+            const sql_query = sql_utils.insert(connection, this.TABLE_NAME, condition)
+            connection.query(sql_query, function (err, result) {
+                if(err){
+                    resolve(false)
+                }else{
+                    resolve(true)
+                }
+            })
         })
     },
 

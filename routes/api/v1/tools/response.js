@@ -6,7 +6,7 @@ module.exports = {
             'message' : message
         }
 
-        if(data != null && data != undefined && data != ''){
+        if(data != null && data !== ''){
             response_data.data = data
         }
 
@@ -15,6 +15,10 @@ module.exports = {
 
     success : function(data){
         return this.response(200, '操作成功', data)
+    },
+
+    success_message : function(message){
+        return this.response(200, message, null)
     },
 
     request_error : function(message){
@@ -39,6 +43,10 @@ module.exports = {
 
     server_maintaining_error : function(message){
         return this.response(503, message)
+    },
+
+    error_params : function (message) {
+        return this.response(402, message, null)
     }
 
 }

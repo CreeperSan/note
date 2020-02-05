@@ -30,10 +30,11 @@ module.exports = {
         query = query + '('
         for(let i=0; i<data_array.length; i++){
             const key = data_array[i][1]
+            // query = query + connection.escape(key)
             query = query + key
             // 还存在下一个，则需要逗号
             if(i+1 < data_array.length){
-                query = connection.escape(query) + ','
+                query = query + ','
             }
         }
         query = query + ')'
