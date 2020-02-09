@@ -31,7 +31,7 @@ module.exports = {
                 this.KEY_EXTRA + " TEXT, " +
                 "foreign key(" + this.KEY_USER_ID + ") references " + user_manager.TABLE_NAME + "(" + user_manager.KEY_ID + ")"  +
                 ") DEFAULT CHARSET=utf8"
-    
+
             connection.query(sql_query, function(err, result){
                 if(err){
                     log.database('初始化 分类 数据库失败')
@@ -47,16 +47,14 @@ module.exports = {
 
     /**
      * TODO : 需要验证是否此用户
-     * @param {string} user_id 用户ID 
-     * @param {string} name 标签名称 
-     * @param {string} text_color 文字颜色 #ff66ccff 
+     * @param {string} user_id 用户ID
+     * @param {string} name 标签名称
+     * @param {string} text_color 文字颜色 #ff66ccff
      * @param {string} background_color 背景颜色 #ff66ccff
      */
     create_category : async function(user_id, name, text_color, background_color){
         return new Promise((resolve, reject) => {
             const connection = mysql_manager.get_database_connection()
-
-            log.database('添加标签 uid:'+user_id+'  name:'+name)
 
             user_id = user_id.toString()
             name = name.toString()
@@ -69,19 +67,19 @@ module.exports = {
             }
 
             let data = {}
-            data[this.KEY_USER_ID] = '\'' + user_id + '\''
-            data[this.KEY_NAME] = '\'' + name + '\''
+            data[this.KEY_USER_ID] = connection.escape(user_id)
+            data[this.KEY_NAME] = connection.escape(name)
             data[this.KEY_CREATE_TIME] = 'NOW()'
-            data[this.KEY_EXTRA] = JSON.stringify(extra_info)
+            data[this.KEY_EXTRA] = connection.escape(JSON.stringify(extra_info))
             let sql_query = sql_utils.insert(connection, this.TABLE_NAME, data)
 
             connection.query(sql_query, function(err, result){
                 if(err){
                     log.e("添加标签失败")
                     log.e(sql_query)
-                    reject(err)
+                    resolve(false)
                 }else{
-                    resolve()
+                    resolve(true)
                 }
             })
         })
@@ -107,9 +105,9 @@ module.exports = {
                 if(err){
                     log.e('删除分类失败')
                     log.e(sql_query)
-                    reject()
+                    resolve(false)
                 }else{
-                    resolve()
+                    resolve(true)
                 }
             })
         })
@@ -118,18 +116,18 @@ module.exports = {
 
     /**
      * 修改标签
-     * @param {id} user_id 
-     * @param {*} _id 
-     * @param {*} name 
-     * @param {*} text_color 
-     * @param {*} background_color 
+     * @param {id} user_id
+     * @param {*} _id
+     * @param {*} name
+     * @param {*} text_color
+     * @param {*} background_color
      */
     modify_category : async function(user_id, _id, name, text_color, background_color){
         return new Promise((resolve, reject) => {
             const connection = mysql_manager.get_database_connection()
 
             log.database('修改标签')
-        
+
             let data = {}
             data[this.KEY_NAME] = name
             let condition = {}
@@ -150,13 +148,24 @@ module.exports = {
 
     },
 
-    query : async function(page, count){
+    query_category : async function(user_id){
         return new Promise((resolve, reject) => {
             const connection = mysql_manager.get_database_connection()
-            resolve()
+            let condition_obj = {}
+            condition_obj[this.KEY_USER_ID] = user_id
+            const sql_query = sql_utils.query(connection, this.TABLE_NAME, 0, 100, null, condition_obj, this.KEY_ID, true)
+            log.i(sql_query)
+            connection.query(sql_query, function (err, result) {
+                if(err){
+                    log.e('查询分类列表失败')
+                    log.e(sql_query)
+                    reject()
+                }else{
+                    resolve(result)
+                }
+            })
         })
-
-    }
+    },
 
 
 

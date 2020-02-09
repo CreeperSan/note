@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock title %}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    {% block meta %}{% endblock meta %}
+    <link href="/base/base.200205.css" rel="stylesheet">
+    <script src="/base/base.200205.js"></script>
+    {% block css %}{% endblock css %}
+    {% block js %}{% endblock js %}
+    {% block script_head %}{% endblock script_head %}
+</head>
+<body>
+    {% block body %}{% endblock body %}
+    {% block script_body %}{% endblock script_body %}
+</body>
+</html>

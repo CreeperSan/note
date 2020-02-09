@@ -43,10 +43,6 @@ router.post('/add', async (ctx, next) => {
     }
 })
 
-router.post('/modify', async (ctx, next) => {
-    ctx.body = response.success(ctx.request.body)
-})
-
 router.post('/delete', async (ctx, next) => {
     ctx.body = response.success(ctx.request.body)
     const user_id = ctx.headers.id

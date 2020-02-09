@@ -15,17 +15,20 @@ async function post(url, data) {
             if(response.data.code === 200){
                 resolve({
                     success : true,
+                    message : '操作成功',
                     data : response.data.data
                 })
             }else{
                 resolve({
-                    success : true,
+                    success : false,
+                    message : response.data.message,
                     data : response.data.message
                 })
             }
         }).catch(function (error) {
             resolve({
-                success : true,
+                success : false,
+                message : '网络连接失败',
                 data : '网络连接失败'
             })
         })

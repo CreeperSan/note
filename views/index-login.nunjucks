@@ -1,0 +1,22 @@
+{% extends 'views/base/base.nunjucks' %}
+
+{% block title %}笔记 - 登录{% endblock title %}
+
+{% block meta %}
+<meta name="robots" content="all" />
+<meta name="author" content="CreeperSan" />
+<meta name="keywords" content="记事本,笔记本,笔记,记录,备忘"/>
+<meta name="description" content="你发现了一个奇怪的笔记本，是否捡起？ | 【是】  【否】"/>
+{% endblock meta %}
+
+{% block body %}
+    <div style="height: 100%;justify-content: center;align-items: center;">
+        <div style="width: 60%;border: solid #666 1px;border-radius: 16px;align-self: center;padding: 16px 26px;">
+            <span>登录</span>
+            <label>用户名<input type="text"/></label>
+            <label>密码<input type="text"/></label>
+            <button>登录</button>
+            <button>注册</button>
+        </div>
+    </div>
+{% endblock body %}
