@@ -9,14 +9,63 @@
 <meta name="description" content="你发现了一个奇怪的笔记本，是否捡起？ | 【是】  【否】"/>
 {% endblock meta %}
 
+{% block js %}
+    <script src="/lib/axios/axios.20200126.js"></script>
+    <script src="/lib/cookie/cookie.20200126.js"></script>
+    <script src="/lib/request/request.20200126.js"></script>
+{% endblock js %}
+
 {% block body %}
-    <div style="height: 100%;justify-content: center;align-items: center;">
-        <div style="width: 60%;border: solid #666 1px;border-radius: 16px;align-self: center;padding: 16px 26px;">
-            <span>登录</span>
-            <label>用户名<input type="text"/></label>
-            <label>密码<input type="text"/></label>
-            <button>登录</button>
-            <button>注册</button>
+    <div style="height: 100%;justify-content: center;align-items: center;background: linear-gradient(to bottom right, #00B7FF, #FFBDCC);">
+        <div style="min-width: 360px;border-radius: 16px;align-self: center;padding: 42px 26px;background:white;box-shadow: 0 0 16px rgba(55,107,109,0.5)">
+            <span style="width: 100%;text-align: center;font-size: 2em;padding: 26px 0;">登录</span>
+            <label style="width: 100%;display: flex;flex-direction: row;padding: 8px 0;">
+                <span style="width: 5em;">邮箱</span>
+                <input style="flex: 1" type="text" id="login-email" value="asd@email.com"/>
+            </label>
+            <label style="width: 100%;display: flex;flex-direction: row;padding: 8px 0;">
+                <span style="width: 5em;">密码</span>
+                <input style="flex: 1" type="password" id="login-password" value="5611100"/>
+            </label>
+            <span id="login-hint" style="width: 100%;text-align: center;color: red;font-size: 10px;padding: 6px 0;">{{ hint }}</span>
+            <button onclick="onLoginClick()" style="padding: 8px 0;margin: 8px 0;">登录</button>
+            <button onclick="onSignInClick()" style="padding: 8px 0;margin: 8px 0 0 0;">注册</button>
         </div>
     </div>
 {% endblock body %}
+
+{% block script_body %}
+    <script>
+        async function onLoginClick() {
+            let emailElement = document.getElementById('login-email')
+            let passwordElement = document.getElementById('login-password')
+            let email = emailElement.value
+            let password = passwordElement.value
+
+            let response = await post('/api/v1/user/login', {
+                email : email,
+                password : password,
+            })
+
+            let loginHintElement = document.getElementById('login-hint')
+
+            if(response.success){
+                let responseData = response.data
+                console.log(responseData.id)
+                console.log(responseData.key)
+                Cookies.set('UserID', responseData.id)
+                Cookies.set('key', responseData.key)
+                loginHintElement.style.color = 'black'
+                loginHintElement.innerText = '登录成功，跳转中'
+                location.reload() // 刷新
+            }else{
+                loginHintElement.style.color = 'red'
+                loginHintElement.innerText = '登录失败，' + response.message
+            }
+        }
+
+        function onSignInClick() {
+            alert('尚未开放注册')
+        }
+    </script>
+{% endblock script_body %}

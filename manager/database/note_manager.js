@@ -15,6 +15,9 @@ module.exports = {
     KEY_TYPE            : 'type',
     KEY_DATA            : 'data',
     KEY_EXTRA           : 'extra',
+    KEY_TITLE           : 'title',
+    KEY_ARCHIVE         : 'archive',        // 归档
+    KEY_PINNED          : 'pinned',         // 置顶
 
     init_table : async function (database) {
         return new Promise((resolve, reject) => {
@@ -23,11 +26,14 @@ module.exports = {
                 log.e("数据库尚未连接, 正在退出")
                 process.exit(0)
             }
-    
+
             // 初始化表
             let sql_query = "CREATE TABLE IF NOT EXISTS " + this.TABLE_NAME + "(" +
                 this.KEY_ID + " INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT ," +
                 this.KEY_USER_ID + " INTEGER UNSIGNED NOT NULL ," +
+                this.KEY_TITLE + ' TEXT,' +
+                this.KEY_ARCHIVE + ' BOOLEAN NOT NULL DEFAULT FALSE ,' +
+                this.KEY_PINNED + ' BOOLEAN NOT NULL DEFAULT FALSE ,' +
                 this.KEY_CREATE_TIME +  " DATETIME NOT NULL ," +
                 this.KEY_MODIFY_TIME +  " DATETIME NOT NULL ," +
                 this.KEY_TYPE + " INTEGER NOT NULL ," +
@@ -35,7 +41,7 @@ module.exports = {
                 this.KEY_EXTRA + " TEXT, " +
                 "foreign key(" + this.KEY_USER_ID + ") references " + user_manager.TABLE_NAME + "(" + user_manager.KEY_ID + ")"  +
                 ") DEFAULT CHARSET=utf8"
-    
+
             database.query(sql_query, function(err, result){
                 if(err){
                     log.database('初始化 笔记 数据库失败')

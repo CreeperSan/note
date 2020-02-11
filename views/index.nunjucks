@@ -1,6 +1,186 @@
-{% extends 'views/layout.nunjucks' %}
+{% extends 'views/base/base.nunjucks' %}
 
-{% block content %}
-    <h1> {{ title }} </h1>
-    <p> Welcome to {{ title }} </p>
-{% endblock %}
+{% block title %}奇怪的笔记{% endblock title %}
+
+{% block meta %}
+    <meta name="robots" content="noindex" />
+    <meta name="author" content="CreeperSan" />
+    <meta name="keywords" content="记事本,笔记本,笔记,记录,备忘"/>
+    <meta name="description" content="你捡起了奇怪的笔记本，获得了【奇怪的笔记本】×1"/>
+{% endblock meta %}
+
+
+{% block css %}
+    <style>
+        hr{ width: 100%;border: none;background-color: #ddd;height: 1px; }
+
+        .drawer-subtitle-span{ width: 92%;font-size: 12px;color:#96842E;padding: 0 4%;margin: 12px 0 8px 0; }
+        .drawer-other-link{ width: 90%;font-size: 12px;color:#C4C8C4;padding: 0 5%; }
+        .drawer-item-div{ width: 98%;flex-direction: row;min-height: 48px;background-color: transparent;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
+        .drawer-item-div:hover{ width: 98%;flex-direction: row;min-height: 48px;background-color: #f1f3f4;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
+        .drawer-item-div:active{ width: 98%;flex-direction: row;min-height: 48px;background-color: #ffefc6;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
+        .drawer-item-div-active{ width: 98%;flex-direction: row;min-height: 48px;background-color: #ffefc6;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
+        .drawer-item-img{ width: 26px;height: 26px;margin-left: 16px; }
+        .drawer-item-span{ margin-left: 8px; }
+    </style>
+{% endblock css %}
+
+{% block js %}
+    <script src="/lib/axios/axios.20200126.js"></script>
+    <script src="/lib/cookie/cookie.20200126.js"></script>
+    <script src="/lib/request/request.20200126.js"></script>
+{% endblock js %}
+
+{% block body %}
+    <div style="width: 100%;height:100%;background:linear-gradient(to bottom left, #FCFAF2, #FFFFFB);">
+        <!-- 顶部导航栏 -->
+        <div style="width: 100%;min-height:64px;box-shadow: 0 0 4px rgba(0,0,0,0.25);flex-direction: row;align-items: center;justify-content: space-between;">
+            <!-- 左侧 -->
+            <div style="flex-direction: row;align-items: center;">
+                <img style="width: 24px;height: 24px;padding: 12px;margin-left: 12px;" src="/icon/ic_menu.png"/>
+                <div style="flex-direction: row;align-items: center;margin-left: 6px;">
+                    <img style="width: 36px;height: 36px;" src="/favicon.ico"/>
+                    <span style="font-size: 1.6em;margin-left: 6px;">笔记</span>
+                </div>
+            </div>
+            <!-- 中间侧 -->
+            <div style="flex-direction: row;align-items: center;width: 50%;background-color: #e7eaec;padding: 6px 24px;justify-content: center;border-radius: 6px;">
+                <img style="width:14px;height: 14px;margin-right: 4px;" src="/icon/ic_search.png">
+                <span style="font-size: 14px;">搜索</span>
+            </div>
+            <!-- 右侧 -->
+            <div style="flex-direction: row;margin-right: 16px;">
+                <img style="width: 32px;height: 32px;border-radius: 100%;border: solid 1px gray;" src="/icon/ic_me.png" />
+            </div>
+        </div>
+
+
+        <!-- 内容 -->
+        <div style="width: 100%;flex-direction: row;overflow-y: scroll;">
+            <!-- 侧边栏 -->
+            <div style="width: 280px;overflow-y:scroll;border-right: solid 1px #c8c8c8;padding: 6px 0 6px 0;">
+
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_note_all.png">
+                    <span class="drawer-item-span">所有笔记</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_archive.png">
+                    <span class="drawer-item-span">归档</span>
+                </div>
+
+                <hr />
+
+                <span class="drawer-subtitle-span">分类</span>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类1</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类2</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">分类3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_add.png">
+                    <span class="drawer-item-span">添加一个新的分类</span>
+                </div>
+                <hr />
+
+                <span class="drawer-subtitle-span">标签</span>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_tag.png">
+                    <span class="drawer-item-span">标签1</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_tag.png">
+                    <span class="drawer-item-span">标签2</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_tag.png">
+                    <span class="drawer-item-span">标签3</span>
+                </div>
+                <div class="drawer-item-div">
+                    <img class="drawer-item-img" src="/icon/ic_add.png">
+                    <span class="drawer-item-span">添加一个新的标签</span>
+                </div>
+                <hr />
+
+                <span class="drawer-subtitle-span">其他</span>
+                <a href="#"><span class="drawer-other-link">隐私权</span></a>
+                <a href="#"><span class="drawer-other-link">条款</span></a>
+                <a href="#"><span class="drawer-other-link">免责声明</span></a>
+
+            </div>
+
+            <!-- 笔记列表内容 -->
+            <div>
+                <span>asdasdsad</span>
+            </div>
+        </div>
+
+        <!-- 弹窗 -->
+        <div style="background: #66ccff;width: 100%;height: 100%;position: fixed;display: none;">
+
+        </div>
+    </div>
+{% endblock body %}
