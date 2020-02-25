@@ -18,6 +18,8 @@
 
         .animation{ transition-duration: 300ms; }
 
+        .content-div{ width: 100%;flex-direction: row;overflow-y: scroll; }
+        .drawer-div{ width: 280px;overflow-y:scroll;border-right: solid 1px #c8c8c8;padding: 6px 0 6px 0; }
         .drawer-subtitle-span{ width: 92%;font-size: 12px;color:#96842E;padding: 0 4%;margin: 12px 0 8px 0; }
         .drawer-other-link{ width: 90%;font-size: 12px;color:#C4C8C4;padding: 0 5%; }
         .drawer-item-div{ width: 98%;flex-direction: row;min-height: 48px;background-color: transparent;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
@@ -43,6 +45,20 @@
         .dialog-create-category-div{ background-color: white;border-radius: 8px;box-shadow: #00B7FF 0 0 6px;padding: 16px 16px; }
         .dialog-create-category-title{ font-size: 1.5em;font-weight: 500;color: black; }
 
+        .root-div{ width: 100%;height:100%;background:linear-gradient(to bottom left, #FCFAF2, #FFFFFB); }
+
+        .navigation-bar-div{ width: 100%;min-height:64px;box-shadow: 0 0 4px rgba(0,0,0,0.25);flex-direction: row;align-items: center;justify-content: space-between; }
+        .navigation-left-div{ flex-direction: row;align-items: center; }
+        .navigation-left-menu{ width: 24px;height: 24px;padding: 12px;margin-left: 12px; }
+        .navigation-left-logo-div{ flex-direction: row;align-items: center;margin-left: 6px; }
+        .navigation-left-logo-img{ width: 36px;height: 36px; }
+        .navigation-left-logo-title{ font-size: 1.6em;margin-left: 6px; }
+        .navigation-center-div{ flex-direction: row;align-items: center;width: 50%;background-color: #e7eaec;padding: 6px 24px;justify-content: center;border-radius: 6px; }
+        .navigation-center-search-icon{ width:14px;height: 14px;margin-right: 4px; }
+        .navigation-center-search-text{ font-size: 14px; }
+        .navigation-right-div{ flex-direction: row;margin-right: 16px; }
+        .navigation-right-icon{ width: 32px;height: 32px;border-radius: 100%;border: solid 1px gray; }
+
     </style>
 {% endblock css %}
 
@@ -50,39 +66,38 @@
     <script src="/lib/axios/axios.20200126.js"></script>
     <script src="/lib/cookie/cookie.20200126.js"></script>
     <script src="/lib/request/request.20200126.js"></script>
-    <script src="/lib/doT/doT.200212.js"></script>
-    <script src="/index/index.200212.js"></script>
+    <script src="/lib/vue/vue.20200225.js"></script>
+{#    <script src="/lib/doT/doT.200212.js"></script>#}
 {% endblock js %}
 
 {% block body %}
-    <div style="width: 100%;height:100%;background:linear-gradient(to bottom left, #FCFAF2, #FFFFFB);">
+    <div id="app" class="root-div">
         <!-- 顶部导航栏 -->
-        <div style="width: 100%;min-height:64px;box-shadow: 0 0 4px rgba(0,0,0,0.25);flex-direction: row;align-items: center;justify-content: space-between;">
+        <div class="navigation-bar-div">
             <!-- 左侧 -->
-            <div style="flex-direction: row;align-items: center;">
-                <img style="width: 24px;height: 24px;padding: 12px;margin-left: 12px;" src="/icon/ic_menu.png"/>
-                <div style="flex-direction: row;align-items: center;margin-left: 6px;">
-                    <img style="width: 36px;height: 36px;" src="/favicon.ico"/>
-                    <span style="font-size: 1.6em;margin-left: 6px;">笔记</span>
+            <div class="navigation-left-div">
+                <img class="navigation-left-menu" src="/icon/ic_menu.png"/>
+                <div class="navigation-left-logo-div">
+                    <img class="navigation-left-logo-img" src="/favicon.ico"/>
+                    <span class="navigation-left-logo-title">笔记</span>
                 </div>
             </div>
-            <!-- 中间侧
-            <div style="flex-direction: row;align-items: center;width: 50%;background-color: #e7eaec;padding: 6px 24px;justify-content: center;border-radius: 6px;">
-                <img style="width:14px;height: 14px;margin-right: 4px;" src="/icon/ic_search.png">
-                <span style="font-size: 14px;">搜索</span>
+            <!-- 中间侧 -->
+            <div class="navigation-center-div">
+                <img class="navigation-center-search-icon" src="/icon/ic_search.png">
+                <span class="navigation-center-search-text">搜索</span>
             </div>
-            -->
             <!-- 右侧 -->
-            <div style="flex-direction: row;margin-right: 16px;">
-                <img style="width: 32px;height: 32px;border-radius: 100%;border: solid 1px gray;" src="/icon/ic_me.png" />
+            <div class="navigation-right-div">
+                <img class="navigation-right-icon" src="/icon/ic_me.png" />
             </div>
         </div>
 
 
         <!-- 内容 -->
-        <div style="width: 100%;flex-direction: row;overflow-y: scroll;">
+        <div class="content-div">
             <!-- 侧边栏 -->
-            <div style="width: 280px;overflow-y:scroll;border-right: solid 1px #c8c8c8;padding: 6px 0 6px 0;">
+            <div class="drawer-div">
 
                 <div class="drawer-item-div">
                     <img class="drawer-item-img" src="/icon/ic_note_all.png">
@@ -96,10 +111,10 @@
                 <hr />
 
                 <span class="drawer-subtitle-span">分类</span>
-                <div id="category-div">
-                    <!-- 分类子项 -->
+                <div class="drawer-item-div" v-for="category in category_list">
+                    <img class="drawer-item-img" src="/icon/ic_category.png">
+                    <span class="drawer-item-span">[[ category.name ]]</span>
                 </div>
-
                 <div class="drawer-item-div">
                     <img class="drawer-item-img" src="/icon/ic_add.png">
                     <span class="drawer-item-span">添加一个新的分类</span>
@@ -107,8 +122,9 @@
                 <hr />
 
                 <span class="drawer-subtitle-span">标签</span>
-                <div id="tag-div">
-                    <!-- 分类子项 -->
+                <div class="drawer-item-div" v-for="tag in tag_list">
+                    <img class="drawer-item-img" src="/icon/ic_tag.png">
+                    <span class="drawer-item-span">[[ tag.name ]]</span>
                 </div>
                 <div class="drawer-item-div">
                     <img class="drawer-item-img" src="/icon/ic_add.png">
@@ -130,7 +146,7 @@
         </div>
 
         <!-- 弹窗 -->
-        <div class="dialog-zone" id="dialog-div">
+        <div class="dialog-zone" id="dialog-div" style="display: none;">
 {#            <div class="dialog-create-category-div">#}
 {#                <span class="dialog-create-category-title">创建标签</span>#}
 {#                <hr/>#}
@@ -147,108 +163,111 @@
         </div>
     </div>
 
-    {% raw %}
-        <!-- 往下是模板 -->
-        <!-- 分类标签 -->
-        <script id="template-category" type="text/x-dot-template">
-            <div class="drawer-item-div">
-                <img class="drawer-item-img" src="/icon/ic_category.png">
-                <span class="drawer-item-span">{{=it.categoryName}}</span>
-            </div>
-        </script>
+{#    {% raw %}#}
+{#        <!-- 往下是模板 -->#}
+{#        <!-- 分类标签 -->#}
+{#        <script id="template-category" type="text/x-dot-template">#}
+{#            <div class="drawer-item-div">#}
+{#                <img class="drawer-item-img" src="/icon/ic_category.png">#}
+{#                <span class="drawer-item-span">{{=it.categoryName}}</span>#}
+{#            </div>#}
+{#        </script>#}
 
-        <!-- 标签标签 -->
-        <script id="template-tag" type="text/x-dot-template">
-            <div class="drawer-item-div">
-                <img class="drawer-item-img" src="/icon/ic_tag.png">
-                <span class="drawer-item-span">{{=it.tagName}}</span>
-            </div>
-        </script>
+{#        <!-- 标签标签 -->#}
+{#        <script id="template-tag" type="text/x-dot-template">#}
+{#            <div class="drawer-item-div">#}
+{#                <img class="drawer-item-img" src="/icon/ic_tag.png">#}
+{#                <span class="drawer-item-span">{{=it.tagName}}</span>#}
+{#            </div>#}
+{#        </script>#}
 
-        <!-- 创建分类对话框 -->
-        <script id="template-dialog-create-category" type="text/x-dot-template">
-            <div class="dialog-create-category-div">
-                <span class="dialog-create-category-title">创建标签</span>
-                <hr/>
-                <label class="dialog-common-label-text"><span class="dialog-common-label-text-name">标签名称 : </span><input class="dialog-common-label-text-input animation" type="text"/></label>
-                <div class="dialog-common-action-button-div">
-                    <div class="flex-space"></div>
-                    <button class="dialog-common-action-button button-negative animation">取消</button>
-                    <button class="dialog-common-action-button button-positive animation">创建</button>
-                </div>
-            </div>
-        </script>
-    {% endraw %}
+{#        <!-- 创建分类对话框 -->#}
+{#        <script id="template-dialog-create-category" type="text/x-dot-template">#}
+{#            <div class="dialog-create-category-div">#}
+{#                <span class="dialog-create-category-title">创建标签</span>#}
+{#                <hr/>#}
+{#                <label class="dialog-common-label-text"><span class="dialog-common-label-text-name">标签名称 : </span><input class="dialog-common-label-text-input animation" type="text"/></label>#}
+{#                <div class="dialog-common-action-button-div">#}
+{#                    <div class="flex-space"></div>#}
+{#                    <button class="dialog-common-action-button button-negative animation" id="dialog-create-category-cancel">取消</button>#}
+{#                    <button class="dialog-common-action-button button-positive animation" id="dialog-create-category-create">创建</button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </script>#}
+{#    {% endraw %}#}
 
 {% endblock body %}
 
 {% block script_body %}
+    <script src="/index/index.200212.js"></script>
+
     <script>
-        const templateCategory = doT.template(document.getElementById('template-category').textContent)
-        const templateTag = doT.template(document.getElementById('template-tag').textContent)
-        const templateDialogCreateCategory = doT.template(document.getElementById('template-dialog-create-category').textContent)
 
-        /**
-         * 初始化分类
-         */
-        async function initCategory(){
-            let response = await getCategory()
-            if(response.success){
-                clearCategoryList()
-                let dataList = response.data.list
-                for(let i=0; i<dataList.length; i++){
-                    let item = dataList[i]
-                    console.log(item)
-                    // 生成HTML到div
-                    document.getElementById('category-div').append(
-                        stringTemplateToHtml(templateCategory({
-                            categoryName : item.name
-                        }))
-                    )
-                }
-            }else{
-
-            }
-            // console.log(response)
-        }
-
-        /**
-         * 初始化标签
-         */
-        async function initTag(){
-            let response = await getTagList()
-            if(response.success){
-                clearTagList()
-                let dataList = response.data.list
-                for(let i=0; i<dataList.length; i++){
-                    let item = dataList[i]
-                    console.log(item)
-                    // 生成HTML到div
-                    document.getElementById('tag-div').append(
-                        stringTemplateToHtml(templateTag({
-                            tagName : item.name
-                        }))
-                    )
-                }
-            }else{
-
-            }
-            console.log(response)
-        }
-
-        /**
-         * 总的初始化
-         */
-        async function init() {
-            initCategory()
-            initTag()
-
-        }
-
-
-
-        init()
-
-        showCreateCategoryDialog()
+        // const templateCategory = doT.template(document.getElementById('template-category').textContent)
+        // const templateTag = doT.template(document.getElementById('template-tag').textContent)
+        // const templateDialogCreateCategory = doT.template(document.getElementById('template-dialog-create-category').textContent)
+        //
+        // /**
+        //  * 初始化分类
+        //  */
+        // async function initCategory(){
+        //     let response = await getCategory()
+        //     if(response.success){
+        //         clearCategoryList()
+        //         let dataList = response.data.list
+        //         for(let i=0; i<dataList.length; i++){
+        //             let item = dataList[i]
+        //             console.log(item)
+        //             // 生成HTML到div
+        //             document.getElementById('category-div').append(
+        //                 stringTemplateToHtml(templateCategory({
+        //                     categoryName : item.name
+        //                 }))
+        //             )
+        //         }
+        //     }else{
+        //
+        //     }
+        //     // console.log(response)
+        // }
+        //
+        // /**
+        //  * 初始化标签
+        //  */
+        // async function initTag(){
+        //     let response = await getTagList()
+        //     if(response.success){
+        //         clearTagList()
+        //         let dataList = response.data.list
+        //         for(let i=0; i<dataList.length; i++){
+        //             let item = dataList[i]
+        //             console.log(item)
+        //             // 生成HTML到div
+        //             document.getElementById('tag-div').append(
+        //                 stringTemplateToHtml(templateTag({
+        //                     tagName : item.name
+        //                 }))
+        //             )
+        //         }
+        //     }else{
+        //
+        //     }
+        //     console.log(response)
+        // }
+        //
+        // /**
+        //  * 总的初始化
+        //  */
+        // async function init() {
+        //     initCategory()
+        //     initTag()
+        //
+        // }
+        //
+        //
+        //
+        // init()
+        //
+        // showCreateCategoryDialog()
     </script>
 {% endblock script_body %}
