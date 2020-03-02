@@ -92,13 +92,7 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el : '#app',
     data : {
-        tag_list : [{
-            id : 1,
-            name : '啊哈哈'
-        },{
-            id : 2,
-            name : '标签2'
-        }],
+        tag_list : [],  // 对应的键有 id, name,
         category_list : [{
             id : 1,
             name : '分类1'
@@ -107,7 +101,38 @@ let app = new Vue({
             name : '分类2'
         }],
     },
+    created : function(){
+        const self = this
+        // 获取所有标签
+        this.refresh_tag_list()
+        // 获取所有分类
+        this.refresh_category_list()
+    },
     methods : {
+        refresh_tag_list : async function () {
+            const self = this
+            let response = await post('/api/v1/tag/list')
+            console.log(response)
+            if(response.success && response.data !== undefined && response.data.list !== undefined){
+                let response_data_list = response.data.list
+                let data_list = []
+                for(let i=0; i<response_data_list.length; i++){
+                    let item = response_data_list[i]
+                    data_list.push({
+                        id : item._id,
+                        name : item.name
+                    })
+                }
+                self.tag_list = data_list
+                console.log('aaaaaaaaaaaaaaaaa')
+                console.log(data_list)
+                console.log('bbbbbbbbbbbbbbbbbb')
+            }else{
+                console.log('获取标签列表失败！请重试！')
+            }
+        },
+        refresh_category_list : function () {
 
+        }
     },
 })

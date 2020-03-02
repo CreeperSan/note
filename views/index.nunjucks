@@ -20,7 +20,6 @@
 
         .content-div{ width: 100%;flex-direction: row;overflow-y: scroll; }
         .drawer-div{ width: 280px;overflow-y:scroll;border-right: solid 1px #c8c8c8;padding: 6px 0 6px 0; }
-        .drawer-subtitle-span{ width: 92%;font-size: 12px;color:#96842E;padding: 0 4%;margin: 12px 0 8px 0; }
         .drawer-other-link{ width: 90%;font-size: 12px;color:#C4C8C4;padding: 0 5%; }
         .drawer-item-div{ width: 98%;flex-direction: row;min-height: 48px;background-color: transparent;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
         .drawer-item-div:hover{ width: 98%;flex-direction: row;min-height: 48px;background-color: #f1f3f4;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
@@ -28,6 +27,11 @@
         .drawer-item-div-active{ width: 98%;flex-direction: row;min-height: 48px;background-color: #ffefc6;align-items: center;border-radius: 0 24px 24px 0;margin: 3px 0;cursor: pointer; }
         .drawer-item-img{ width: 26px;height: 26px;margin-left: 16px; }
         .drawer-item-span{ margin-left: 8px; }
+
+        .drawer-category-div{ flex-direction: row;align-items: center;padding: 0 16px; }
+        .drawer-category-subtitle{ width: 92%;font-size: 12px;color:#96842E;padding: 0 4%;margin: 8px 0;flex:1; }
+        .drawer-category-name{ width: 16px;height: 16px;padding: 2px;cursor: pointer; }
+        .drawer-category-name:hover{ background-color: #C4C8C4;border-radius: 4px; }
 
         .dialog-zone{ background-color: rgba(0,0,0,0.5);width: 100%;height: 100%;position: fixed;justify-content: center;align-items: center;display: flex; }
         .dialog-common-label-text{ display: flex;flex-wrap: wrap;padding: 8px 0; }
@@ -110,7 +114,10 @@
 
                 <hr />
 
-                <span class="drawer-subtitle-span">分类</span>
+                <div class="drawer-category-div">
+                    <span class="drawer-category-subtitle">分类</span>
+                    <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
+                </div>
                 <div class="drawer-item-div" v-for="category in category_list">
                     <img class="drawer-item-img" src="/icon/ic_category.png">
                     <span class="drawer-item-span">[[ category.name ]]</span>
@@ -121,7 +128,10 @@
                 </div>
                 <hr />
 
-                <span class="drawer-subtitle-span">标签</span>
+                <div class="drawer-category-div">
+                    <span class="drawer-category-subtitle">标签</span>
+                    <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
+                </div>
                 <div class="drawer-item-div" v-for="tag in tag_list">
                     <img class="drawer-item-img" src="/icon/ic_tag.png">
                     <span class="drawer-item-span">[[ tag.name ]]</span>
@@ -132,7 +142,7 @@
                 </div>
                 <hr />
 
-                <span class="drawer-subtitle-span">其他</span>
+                <span class="drawer-category-subtitle">其他</span>
                 <a href="#"><span class="drawer-other-link">隐私权</span></a>
                 <a href="#"><span class="drawer-other-link">条款</span></a>
                 <a href="#"><span class="drawer-other-link">免责声明</span></a>

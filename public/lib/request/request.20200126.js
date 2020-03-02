@@ -11,7 +11,7 @@ async function post(url, data) {
             },
             data    : data
         }).then(function (response) {
-            console.log(response);
+            // console.log('URL => ' + url + ' RESPONSE => ' + JSON.stringify(response));
             if(response.data.code === 200){
                 resolve({
                     success : true,
