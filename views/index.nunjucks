@@ -47,7 +47,7 @@
         .button-neutral{ color: #000000; }
 
         .dialog-create-category-div{ background-color: white;border-radius: 8px;box-shadow: #00B7FF 0 0 6px;padding: 16px 16px; }
-        .dialog-create-category-title{ font-size: 1.5em;font-weight: 500;color: black; }
+        .dialog-create-category-title{ font-size: 1.5em;font-weight: 500;color: black;margin: 0 0 8px 0; }
 
         .root-div{ width: 100%;height:100%;background:linear-gradient(to bottom left, #FCFAF2, #FFFFFB); }
 
@@ -132,11 +132,11 @@
                     <span class="drawer-category-subtitle">标签</span>
                     <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
                 </div>
-                <div class="drawer-item-div" v-for="tag in tag_list">
+                <div class="drawer-item-div" v-for="tag in tag_list" v-on:click="show_create_tag_dialog(tag)">
                     <img class="drawer-item-img" src="/icon/ic_tag.png">
                     <span class="drawer-item-span">[[ tag.name ]]</span>
                 </div>
-                <div class="drawer-item-div">
+                <div class="drawer-item-div" v-on:click="show_create_tag_dialog(null)">
                     <img class="drawer-item-img" src="/icon/ic_add.png">
                     <span class="drawer-item-span">添加一个新的标签</span>
                 </div>
@@ -156,20 +156,32 @@
         </div>
 
         <!-- 弹窗 -->
-        <div class="dialog-zone" id="dialog-div" style="display: none;">
-{#            <div class="dialog-create-category-div">#}
-{#                <span class="dialog-create-category-title">创建标签</span>#}
-{#                <hr/>#}
-{#                <label class="dialog-common-label-text"><span class="dialog-common-label-text-name">标签名称 : </span><input class="dialog-common-label-text-input animation" type="text"/></label>#}
-{#                <label class="dialog-common-label-text"><span class="dialog-common-label-text-name">标签名称 : </span><input class="dialog-common-label-text-input animation" type="text"/></label>#}
-{#                <!-- <label>文字颜色 : <input/></label> -->#}
-{#                <!-- <label>背景颜色 : <input/></label> -->#}
-{#                <div class="dialog-common-action-button-div">#}
-{#                    <div class="flex-space"></div>#}
-{#                    <button class="dialog-common-action-button button-negative animation">取消</button>#}
-{#                    <button class="dialog-common-action-button button-positive animation">创建</button>#}
-{#                </div>#}
-{#            </div>#}
+        <div class="dialog-zone" id="dialog-div" v-show="is_show_dialog">
+            <div class="dialog-create-category-div">
+                <span class="dialog-create-category-title" id="dialog-tag-create-title">创建标签</span>
+                <hr/>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">标签名称 : </span>
+                    <input class="dialog-common-label-text-input animation" id="dialog-tag-create-name" type="text" placeholder="请输入标签名称" maxlength="16"/>
+                </label>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">标签编号 : </span>
+                    <span id="dialog-tag-create-id">#16</span>
+                </label>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">创建时间 : </span>
+                    <span id="dialog-tag-create-create-time">2016.06.03 14:23:10</span>
+                </label>
+                <!-- <label>文字颜色 : <input/></label> -->
+                <!-- <label>背景颜色 : <input/></label> -->
+                <hr/>
+                <div class="dialog-common-action-button-div">
+                    <button class="dialog-common-action-button button-warming animation">删除</button>
+                    <div class="flex-space"></div>
+                    <button class="dialog-common-action-button button-negative animation" id="dialog-tag-create-btn-cancel">取消</button>
+                    <button class="dialog-common-action-button button-positive animation" id="dialog-tag-create-btn-confirm">确认</button>
+                </div>
+            </div>
         </div>
     </div>
 

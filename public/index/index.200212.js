@@ -92,14 +92,11 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el : '#app',
     data : {
-        tag_list : [],  // 对应的键有 id, name,
-        category_list : [{
-            id : 1,
-            name : '分类1'
-        },{
-            id : 2,
-            name : '分类2'
-        }],
+        /** 下面是控制UI相关的变量 **/
+        is_show_dialog : false,         // 是否正在显示对话框（对话框背景是否展示）
+        /** 下面是控制数据相关的变量 **/
+        tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
+        category_list : [],             // 分类列表 对应的键有 id, name, create_time
     },
     created : function(){
         const self = this
@@ -109,10 +106,10 @@ let app = new Vue({
         this.refresh_category_list()
     },
     methods : {
+        /** 刷新标签列表 **/
         refresh_tag_list : async function () {
             const self = this
             let response = await post('/api/v1/tag/list')
-            console.log(response)
             if(response.success && response.data !== undefined && response.data.list !== undefined){
                 let response_data_list = response.data.list
                 let data_list = []
@@ -120,19 +117,68 @@ let app = new Vue({
                     let item = response_data_list[i]
                     data_list.push({
                         id : item._id,
-                        name : item.name
+                        name : item.name,
+                        create_time : item.create_time,
                     })
                 }
                 self.tag_list = data_list
-                console.log('aaaaaaaaaaaaaaaaa')
                 console.log(data_list)
-                console.log('bbbbbbbbbbbbbbbbbb')
             }else{
                 console.log('获取标签列表失败！请重试！')
             }
         },
-        refresh_category_list : function () {
-
+        /** 刷新分类列表 **/
+        refresh_category_list : async function () {
+            const self = this
+            let response = await post('/api/v1/category/list')
+            if(response.success && response.data !== undefined && response.data.list !== undefined){
+                let response_data_list = response.data.list
+                let data_list = []
+                for(let i=0; i<response_data_list.length; i++){
+                    let item = response_data_list[i]
+                    data_list.push({
+                        id : item._id,
+                        name : item.name,
+                        create_time : item.create_time,
+                    })
+                }
+                self.category_list = data_list
+                console.log(data_list)
+            }else{
+                console.log('获取分类列表失败！请重试！')
+            }
+        },
+        /** 显示创建标签对话框 **/
+        show_create_tag_dialog : function (tag_model) {
+            const self = this
+            self.is_show_dialog = true
+            // getElementByID
+            let element_title = document.getElementById('dialog-tag-create-title')
+            let element_name = document.getElementById('dialog-tag-create-name')
+            let element_id = document.getElementById('dialog-tag-create-id')
+            let element_create_time = document.getElementById('dialog-tag-create-create-time')
+            let element_btn_cancel = document.getElementById('dialog-tag-create-btn-cancel')
+            let element_btn_confirm = document.getElementById('dialog-tag-create-btn-confirm')
+            let element_btn_delete = document.getElementById('dialog-tag-create-btn-delete')
+            //  初始化数据
+            console.log(tag_model)
+            if(tag_model === null || tag_model === undefined){
+                // 说明是创建标签
+                element_title.innerText = '创建标签'
+                element_name.value = ''
+                element_id.innerText = '尚未创建'
+                element_create_time.innerText = '尚未创建'
+            }else{
+                // 说明是编辑标签
+                element_title.innerText = '编辑标签'
+                element_name.value = tag_model.name
+                element_id.innerText = '#' + tag_model.id
+                element_create_time.innerText = tag_model.create_time
+            }
+            // 按钮的点击事
+            element_btn_cancel.onclick = function () {
+                self.is_show_dialog = false
+            }
         }
     },
 })
