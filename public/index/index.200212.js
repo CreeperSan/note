@@ -92,8 +92,13 @@ let app = new Vue({
     delimiters: ['[[', ']]'],
     el : '#app',
     data : {
+        /** 一些常量 **/
+        DIALOG_NONE : 0,
+        DIALOG_MESSAGE : 1000,
+        DIALOG_EDIT_TAG : 1001,
+        DIALOG_EDIT_CATEGORY : 1002,
         /** 下面是控制UI相关的变量 **/
-        is_show_dialog : false,         // 是否正在显示对话框（对话框背景是否展示）
+        flag_dialog : 0,         // 是否正在显示对话框（对话框背景是否展示）
         /** 下面是控制数据相关的变量 **/
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
         category_list : [],             // 分类列表 对应的键有 id, name, create_time
@@ -151,7 +156,7 @@ let app = new Vue({
         /** 显示创建标签对话框 **/
         show_create_tag_dialog : function (tag_model) {
             const self = this
-            self.is_show_dialog = true
+            self.flag_dialog = self.DIALOG_EDIT_TAG
             // getElementByID
             let element_title = document.getElementById('dialog-tag-create-title')
             let element_name = document.getElementById('dialog-tag-create-name')
@@ -177,8 +182,34 @@ let app = new Vue({
             }
             // 按钮的点击事
             element_btn_cancel.onclick = function () {
-                self.is_show_dialog = false
+                self.flag_dialog = self.DIALOG_NONE
             }
+            element_btn_delete.onclick = function () {
+                self.show_message_dialog('删除标签', '你确定要删除"'+tag_model.name+'"吗？此操作不可逆！', function () {
+                    self.close_dialog()
+                }, function () {
+                    self.close_dialog()
+                })
+            }
+        },
+        /* 显示消息对话框 */
+        show_message_dialog : function (title, message, positive_callback, negative_callback) {
+            const self = this
+            let element_title = document.getElementById('dialog-message-title')
+            let element_message = document.getElementById('dialog-message-message')
+            let element_btn_cancel = document.getElementById('dialog-message-cancel')
+            let element_btn_confirm = document.getElementById('dialog-message-confirm')
+            // 设置内容
+            element_title.innerText = title
+            element_message.innerText = message
+            element_btn_confirm.onclick = positive_callback
+            element_btn_cancel.onclick = negative_callback
+            self.flag_dialog = self.DIALOG_MESSAGE
+        },
+        /* 关闭所有对话框 */
+        close_dialog : function () {
+            const self = this
+            self.flag_dialog = self.DIALOG_NONE
         }
     },
 })

@@ -34,6 +34,8 @@
         .drawer-category-name:hover{ background-color: #C4C8C4;border-radius: 4px; }
 
         .dialog-zone{ background-color: rgba(0,0,0,0.5);width: 100%;height: 100%;position: fixed;justify-content: center;align-items: center;display: flex; }
+        .dialog-common-background{ background-color: white;padding: 16px 26px;border-radius: 16px; }
+        .dialog-common-title{ font-size: 1.5em;font-weight: bold; }
         .dialog-common-label-text{ display: flex;flex-wrap: wrap;padding: 8px 0; }
         .dialog-common-label-text-name{ min-width: 96px; }
         .dialog-common-label-text-input{ outline: none;border-top: none;border-left: none;border-right: none;border-bottom: solid #eee 1px; }
@@ -48,6 +50,8 @@
 
         .dialog-create-category-div{ background-color: white;border-radius: 8px;box-shadow: #00B7FF 0 0 6px;padding: 16px 16px; }
         .dialog-create-category-title{ font-size: 1.5em;font-weight: 500;color: black;margin: 0 0 8px 0; }
+
+        .dialog-message-content{ font-size: 1.2em;display: block;margin: 16px 0; }
 
         .root-div{ width: 100%;height:100%;background:linear-gradient(to bottom left, #FCFAF2, #FFFFFB); }
 
@@ -156,8 +160,9 @@
         </div>
 
         <!-- 弹窗 -->
-        <div class="dialog-zone" id="dialog-div" v-show="is_show_dialog">
-            <div class="dialog-create-category-div">
+        <div class="dialog-zone" id="dialog-div" v-show="flag_dialog !== DIALOG_NONE">
+            <!-- 添加编辑标签对话框 -->
+            <div class="dialog-create-category-div" v-show="flag_dialog === DIALOG_EDIT_TAG">
                 <span class="dialog-create-category-title" id="dialog-tag-create-title">创建标签</span>
                 <hr/>
                 <label class="dialog-common-label-text">
@@ -176,10 +181,20 @@
                 <!-- <label>背景颜色 : <input/></label> -->
                 <hr/>
                 <div class="dialog-common-action-button-div">
-                    <button class="dialog-common-action-button button-warming animation">删除</button>
+                    <button class="dialog-common-action-button button-warming animation"  id="dialog-tag-create-btn-delete">删除</button>
                     <div class="flex-space"></div>
                     <button class="dialog-common-action-button button-negative animation" id="dialog-tag-create-btn-cancel">取消</button>
                     <button class="dialog-common-action-button button-positive animation" id="dialog-tag-create-btn-confirm">确认</button>
+                </div>
+            </div>
+            <!-- 消息对话框 -->
+            <div class="dialog-common-background" v-show="flag_dialog === DIALOG_MESSAGE">
+                <span class="dialog-common-title" id="dialog-message-title">asdasd</span>
+                <span class="dialog-message-content" id="dialog-message-message">asdasd</span>
+                <div class="dialog-common-action-button-div">
+                    <div class="flex-space"></div>
+                    <button class="dialog-common-action-button button-negative animation" id="dialog-message-cancel">取消</button>
+                    <button class="dialog-common-action-button button-positive animation" id="dialog-message-confirm">确认</button>
                 </div>
             </div>
         </div>
