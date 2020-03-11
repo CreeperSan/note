@@ -201,7 +201,7 @@
             </div>
             <!-- 加载中对话框 -->
             <div class="dialog-common-background" style="align-items: center;" v-show="flag_dialog === DIALOG_LOADING">
-                <img class="animation-rotate" style="width: 75px;height: 75px;" src="/icon/ic_loading.png" />
+                <img id="dialog-loading-img" class="animation-rotate" style="width: 75px;height: 75px;" src="/icon/ic_loading.png" />
                 <span id="dialog-loading-message" style="margin-top: 16px;width: 100%;">加载中</span>
             </div>
         </div>

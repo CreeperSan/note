@@ -47,7 +47,7 @@ router.post('/delete', async (ctx, next) => {
     ctx.body = response.success(ctx.request.body)
     const user_id = ctx.headers.id
     const user_key = ctx.headers.key
-    const param_delete_tag_id = ctx.request.body.tag_id
+    const param_delete_tag_id = ctx.request.body.id
     if(param_utils.isEmpty(param_delete_tag_id)){
         ctx.body = response.request_error('缺少TagID')
         return

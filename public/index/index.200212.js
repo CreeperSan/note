@@ -154,6 +154,10 @@ let app = new Vue({
                 console.log('获取分类列表失败！请重试！')
             }
         },
+        /** 显示创建分类对话框 **/
+        show_create_category_dialog : function(category_model){
+            const self = this
+        },
         /** 显示创建标签对话框 **/
         show_create_tag_dialog : function (tag_model) {
             const self = this
@@ -187,15 +191,40 @@ let app = new Vue({
             element_btn_cancel.onclick = function () {
                 self.flag_dialog = self.DIALOG_NONE
             }
+            // 删除标签
             element_btn_delete.onclick = function () {
-                self.show_message_dialog('删除标签', '你确定要删除"'+tag_model.name+'"吗？此操作不可逆！', function () {
+                self.show_message_dialog('删除标签', '你确定要删除"'+tag_model.name+'"吗？此操作不可逆！',  async function () {
                     self.show_loading_dialog('正在删除标签', true)
+                    let response = await post('/api/v1/tag/delete', {
+                        id : tag_model.id
+                    })
+                    if (response.success){
+                        self.show_success_dialog('标签 "'+tag_model.name + '" 已删除', 2000)
+                        await self.refresh_tag_list()
+                    }else{
+                        self.show_fail_dialog('删除失败，' + response.message, 2000)
+                    }
                 }, function () {
                     self.close_dialog()
                 })
             }
-            element_btn_confirm.onclick = function () {
-                self.show_loading_dialog('正在保存标签', true)
+            // 创建/保存 标签
+            element_btn_confirm.onclick = async function () {
+                self.show_loading_dialog('正在创建标签', true)
+                let tag_name = element_name.value
+                if(!tag_name || tag_name.length <= 0){
+                    self.show_fail_dialog('标签名称不能为空！', 2000)
+                }else{
+                    let response = await post('/api/v1/tag/add', {
+                        name : tag_name
+                    })
+                    if (response.success){
+                        self.show_success_dialog('创建标签成功', 2000)
+                        await self.refresh_tag_list()
+                    }else{
+                        self.show_success_dialog('创建标签失败，' + response.message, 2000)
+                    }
+                }
             }
         },
         /* 显示消息对话框 */
@@ -212,12 +241,35 @@ let app = new Vue({
             element_btn_cancel.onclick = negative_callback
             self.flag_dialog = self.DIALOG_MESSAGE
         },
-        /* 显示加载中对话框 */
-        show_loading_dialog : function(content, cancelable){
+        /* 显示对话框 */
+        _show_loading_dialog : function(img, content, dismiss_time){
             const self = this
             let element_message = document.getElementById('dialog-loading-message')
+            let element_img = document.getElementById('dialog-loading-img')
+            element_img.src = img
             element_message.innerText = content
             self.flag_dialog = self.DIALOG_LOADING
+            // 自动关闭
+            if (dismiss_time !== undefined && dismiss_time !== null && dismiss_time > 0){
+                setTimeout(function () {
+                    self.close_dialog()
+                }, dismiss_time)
+            }
+        },
+        /* 显示加载中对话框 */
+        show_loading_dialog : function(content){
+            const self = this
+            self._show_loading_dialog('/icon/ic_loading.png', content, 0)
+        },
+        /* 显示成功的对话框 */
+        show_success_dialog : function(content, dismiss_time){
+            const self = this
+            self._show_loading_dialog('/icon/ic_success.png', content, dismiss_time)
+        },
+        /* 显示失败的对话框 */
+        show_fail_dialog : function(content, dismiss_time){
+            const self = this
+            self._show_loading_dialog('/icon/ic_fail.png', content, dismiss_time)
         },
         /* 关闭所有对话框 */
         close_dialog : function () {
