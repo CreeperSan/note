@@ -97,6 +97,7 @@ let app = new Vue({
         DIALOG_MESSAGE : 1000,
         DIALOG_EDIT_TAG : 1001,
         DIALOG_EDIT_CATEGORY : 1002,
+        DIALOG_LOADING : 1003,
         /** 下面是控制UI相关的变量 **/
         flag_dialog : 0,         // 是否正在显示对话框（对话框背景是否展示）
         /** 下面是控制数据相关的变量 **/
@@ -173,12 +174,14 @@ let app = new Vue({
                 element_name.value = ''
                 element_id.innerText = '尚未创建'
                 element_create_time.innerText = '尚未创建'
+                element_btn_delete.style.display = 'none'
             }else{
                 // 说明是编辑标签
                 element_title.innerText = '编辑标签'
                 element_name.value = tag_model.name
                 element_id.innerText = '#' + tag_model.id
                 element_create_time.innerText = tag_model.create_time
+                element_btn_delete.style.display = 'block'
             }
             // 按钮的点击事
             element_btn_cancel.onclick = function () {
@@ -186,10 +189,13 @@ let app = new Vue({
             }
             element_btn_delete.onclick = function () {
                 self.show_message_dialog('删除标签', '你确定要删除"'+tag_model.name+'"吗？此操作不可逆！', function () {
-                    self.close_dialog()
+                    self.show_loading_dialog('正在删除标签', true)
                 }, function () {
                     self.close_dialog()
                 })
+            }
+            element_btn_confirm.onclick = function () {
+                self.show_loading_dialog('正在保存标签', true)
             }
         },
         /* 显示消息对话框 */
@@ -205,6 +211,13 @@ let app = new Vue({
             element_btn_confirm.onclick = positive_callback
             element_btn_cancel.onclick = negative_callback
             self.flag_dialog = self.DIALOG_MESSAGE
+        },
+        /* 显示加载中对话框 */
+        show_loading_dialog : function(content, cancelable){
+            const self = this
+            let element_message = document.getElementById('dialog-loading-message')
+            element_message.innerText = content
+            self.flag_dialog = self.DIALOG_LOADING
         },
         /* 关闭所有对话框 */
         close_dialog : function () {

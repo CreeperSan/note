@@ -67,6 +67,8 @@
         .navigation-right-div{ flex-direction: row;margin-right: 16px; }
         .navigation-right-icon{ width: 32px;height: 32px;border-radius: 100%;border: solid 1px gray; }
 
+        .animation-rotate{ animation:myRotate 1s linear infinite; }
+        @keyframes myRotate{ 0%{ -webkit-transform: rotate(0deg);} 50%{ -webkit-transform: rotate(180deg);} 100%{ -webkit-transform: rotate(360deg);} }
     </style>
 {% endblock css %}
 
@@ -196,6 +198,11 @@
                     <button class="dialog-common-action-button button-negative animation" id="dialog-message-cancel">取消</button>
                     <button class="dialog-common-action-button button-positive animation" id="dialog-message-confirm">确认</button>
                 </div>
+            </div>
+            <!-- 加载中对话框 -->
+            <div class="dialog-common-background" style="align-items: center;" v-show="flag_dialog === DIALOG_LOADING">
+                <img class="animation-rotate" style="width: 75px;height: 75px;" src="/icon/ic_loading.png" />
+                <span id="dialog-loading-message" style="margin-top: 16px;width: 100%;">加载中</span>
             </div>
         </div>
     </div>
