@@ -1,21 +1,23 @@
 const router = require('koa-router')()
+const response = require('./tools/response')
 
 router.prefix('/api/v1/note')
 
-router.get('/', async (ctx, next) => {
-    await ctx.render('index', {
-        title: 'Hello Koa 2!'
-    })
+router.post('/list', async (ctx, next) => {
+
 })
 
-router.get('/string', async (ctx, next) => {
-    ctx.body = 'koa2 string'
+router.post('/add/text-plain', async (ctx, next) => {
+    ctx.body = response.success(ctx.request.body)
+    const user_id = ctx.headers.id
+    const user_key = ctx.headers.key
+    const title = ctx.request.body.title
+    const type = ctx.request.body.type
+    const data = ctx.request.body.data
 })
 
-router.get('/json', async (ctx, next) => {
-    ctx.body = {
-        title: 'koa2 json'
-    }
+router.post('/delete', async (ctx, next) => {
+
 })
 
 module.exports = router

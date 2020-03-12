@@ -8,8 +8,10 @@ let app = new Vue({
         DIALOG_EDIT_TAG : 1001,
         DIALOG_EDIT_CATEGORY : 1002,
         DIALOG_LOADING : 1003,
+        NOTE_TYPE_PLAIN_TEXT : 1,
         /** 下面是控制UI相关的变量 **/
         flag_dialog : 0,                // 是否正在显示对话框（对话框背景是否展示）
+        flag_note_type : 0,             // 编辑笔记的类型
         /** 下面是控制数据相关的变量 **/
         note_editing : null,            // 当前正在编辑的笔记，如果为null则代表正在显示列表
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
@@ -257,12 +259,28 @@ let app = new Vue({
         /* 按下了编写新的笔记 */
         on_write_new_note_click : function () {
             const self = this
+            self.flag_note_type = self.NOTE_TYPE_PLAIN_TEXT
             self.note_editing = {}
         },
         /* 按下了保存笔记按钮 */
         on_save_note_click : function () {
             const self = this
             self.note_editing = null
+            switch (self.flag_note_type) {
+                // 保存为 纯文本
+                case self.NOTE_TYPE_PLAIN_TEXT:{
+                    let element_title = document.getElementById('note-title')
+                    let element_content = document.getElementById('note-text-plain-content')
+                    let title_str = element_title.value
+                    let content_str = element_content.value
+                    self.show_fail_dialog('保存失败', 2000)
+                    break
+                }
+                // 保存为 其他类型
+                default : {
+                    break;
+                }
+            }
         },
     },
 })
