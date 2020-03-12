@@ -124,11 +124,11 @@
                     <span class="drawer-category-subtitle">分类</span>
                     <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
                 </div>
-                <div class="drawer-item-div" v-for="category in category_list">
+                <div class="drawer-item-div" v-for="category in category_list" v-on:click="show_create_category_dialog(category)">
                     <img class="drawer-item-img" src="/icon/ic_category.png">
                     <span class="drawer-item-span">[[ category.name ]]</span>
                 </div>
-                <div class="drawer-item-div">
+                <div class="drawer-item-div" v-on:click="show_create_category_dialog(null)">
                     <img class="drawer-item-img" src="/icon/ic_add.png">
                     <span class="drawer-item-span">添加一个新的分类</span>
                 </div>
@@ -156,8 +156,21 @@
             </div>
 
             <!-- 笔记列表内容 -->
-            <div>
+            <div style="width: 100%;" v-show="!note_editing">
+                <!--  编写新的笔记按钮  -->
+                <div style="position: fixed;right: 26px;bottom: 26px;background-color: #6467c9;border-radius: 100%;cursor: pointer;box-shadow: gray 0 0 8px;" v-on:click="on_write_new_note_click()">
+                    <img style="width: 30px;height: 30px;margin: 16px;" src="/icon/ic_pencil_white.png"/>
+                </div>
+
                 <span>asdasdsad</span>
+            </div>
+            <!-- 笔记编辑内容 -->
+            <div style="width: 100%;" v-show="note_editing">
+                <!--  保存笔记按钮  -->
+                <div style="position: fixed;right: 26px;bottom: 26px;background-color: #6467c9;border-radius: 100%;cursor: pointer;box-shadow: gray 0 0 8px;" v-on:click="on_save_note_click()">
+                    <img style="width: 30px;height: 30px;margin: 16px;" src="/icon/ic_pencil_white.png"/>
+                </div>
+                <span>编写笔记</span>
             </div>
         </div>
 
@@ -179,14 +192,36 @@
                     <span class="dialog-common-label-text-name">创建时间 : </span>
                     <span id="dialog-tag-create-create-time">2016.06.03 14:23:10</span>
                 </label>
-                <!-- <label>文字颜色 : <input/></label> -->
-                <!-- <label>背景颜色 : <input/></label> -->
                 <hr/>
                 <div class="dialog-common-action-button-div">
                     <button class="dialog-common-action-button button-warming animation"  id="dialog-tag-create-btn-delete">删除</button>
                     <div class="flex-space"></div>
                     <button class="dialog-common-action-button button-negative animation" id="dialog-tag-create-btn-cancel">取消</button>
                     <button class="dialog-common-action-button button-positive animation" id="dialog-tag-create-btn-confirm">确认</button>
+                </div>
+            </div>
+            <!-- 添加编辑分类对话框 -->
+            <div class="dialog-create-category-div" v-show="flag_dialog === DIALOG_EDIT_CATEGORY">
+                <span class="dialog-create-category-title" id="dialog-category-create-title">创建分类</span>
+                <hr/>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">分类名称 : </span>
+                    <input class="dialog-common-label-text-input animation" id="dialog-category-create-name" type="text" placeholder="请输入分类名称" maxlength="16"/>
+                </label>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">分类编号 : </span>
+                    <span id="dialog-category-create-id">#16</span>
+                </label>
+                <label class="dialog-common-label-text">
+                    <span class="dialog-common-label-text-name">创建时间 : </span>
+                    <span id="dialog-category-create-create-time">2016.06.03 14:23:10</span>
+                </label>
+                <hr/>
+                <div class="dialog-common-action-button-div">
+                    <button class="dialog-common-action-button button-warming animation"  id="dialog-category-create-btn-delete">删除</button>
+                    <div class="flex-space"></div>
+                    <button class="dialog-common-action-button button-negative animation" id="dialog-category-create-btn-cancel">取消</button>
+                    <button class="dialog-common-action-button button-positive animation" id="dialog-category-create-btn-confirm">确认</button>
                 </div>
             </div>
             <!-- 消息对话框 -->
@@ -207,39 +242,6 @@
         </div>
     </div>
 
-{#    {% raw %}#}
-{#        <!-- 往下是模板 -->#}
-{#        <!-- 分类标签 -->#}
-{#        <script id="template-category" type="text/x-dot-template">#}
-{#            <div class="drawer-item-div">#}
-{#                <img class="drawer-item-img" src="/icon/ic_category.png">#}
-{#                <span class="drawer-item-span">{{=it.categoryName}}</span>#}
-{#            </div>#}
-{#        </script>#}
-
-{#        <!-- 标签标签 -->#}
-{#        <script id="template-tag" type="text/x-dot-template">#}
-{#            <div class="drawer-item-div">#}
-{#                <img class="drawer-item-img" src="/icon/ic_tag.png">#}
-{#                <span class="drawer-item-span">{{=it.tagName}}</span>#}
-{#            </div>#}
-{#        </script>#}
-
-{#        <!-- 创建分类对话框 -->#}
-{#        <script id="template-dialog-create-category" type="text/x-dot-template">#}
-{#            <div class="dialog-create-category-div">#}
-{#                <span class="dialog-create-category-title">创建标签</span>#}
-{#                <hr/>#}
-{#                <label class="dialog-common-label-text"><span class="dialog-common-label-text-name">标签名称 : </span><input class="dialog-common-label-text-input animation" type="text"/></label>#}
-{#                <div class="dialog-common-action-button-div">#}
-{#                    <div class="flex-space"></div>#}
-{#                    <button class="dialog-common-action-button button-negative animation" id="dialog-create-category-cancel">取消</button>#}
-{#                    <button class="dialog-common-action-button button-positive animation" id="dialog-create-category-create">创建</button>#}
-{#                </div>#}
-{#            </div>#}
-{#        </script>#}
-{#    {% endraw %}#}
-
 {% endblock body %}
 
 {% block script_body %}
@@ -247,71 +249,6 @@
 
     <script>
 
-        // const templateCategory = doT.template(document.getElementById('template-category').textContent)
-        // const templateTag = doT.template(document.getElementById('template-tag').textContent)
-        // const templateDialogCreateCategory = doT.template(document.getElementById('template-dialog-create-category').textContent)
-        //
-        // /**
-        //  * 初始化分类
-        //  */
-        // async function initCategory(){
-        //     let response = await getCategory()
-        //     if(response.success){
-        //         clearCategoryList()
-        //         let dataList = response.data.list
-        //         for(let i=0; i<dataList.length; i++){
-        //             let item = dataList[i]
-        //             console.log(item)
-        //             // 生成HTML到div
-        //             document.getElementById('category-div').append(
-        //                 stringTemplateToHtml(templateCategory({
-        //                     categoryName : item.name
-        //                 }))
-        //             )
-        //         }
-        //     }else{
-        //
-        //     }
-        //     // console.log(response)
-        // }
-        //
-        // /**
-        //  * 初始化标签
-        //  */
-        // async function initTag(){
-        //     let response = await getTagList()
-        //     if(response.success){
-        //         clearTagList()
-        //         let dataList = response.data.list
-        //         for(let i=0; i<dataList.length; i++){
-        //             let item = dataList[i]
-        //             console.log(item)
-        //             // 生成HTML到div
-        //             document.getElementById('tag-div').append(
-        //                 stringTemplateToHtml(templateTag({
-        //                     tagName : item.name
-        //                 }))
-        //             )
-        //         }
-        //     }else{
-        //
-        //     }
-        //     console.log(response)
-        // }
-        //
-        // /**
-        //  * 总的初始化
-        //  */
-        // async function init() {
-        //     initCategory()
-        //     initTag()
-        //
-        // }
-        //
-        //
-        //
-        // init()
-        //
-        // showCreateCategoryDialog()
+
     </script>
 {% endblock script_body %}

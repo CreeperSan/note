@@ -1,93 +1,3 @@
-// ////////////////////////////////////////////////////
-// //  引用到 request.js
-// ////////////////////////////////////////////////////
-//
-// /**
-//  *  获取分类信息部分
-//  */
-// async function getTagList() {
-//    return await post('/api/v1/tag/list', null)
-// }
-//
-// async function deleteTag(tagID){
-//     return await post('/api/v1/tag/delete', {
-//         tag_id : tagID
-//     })
-// }
-//
-// /**
-//  *  获取标签信息部分
-//  */
-// async function getCategory() {
-//     return await post('/api/v1/category/list')
-// }
-//
-// async function deleteCategory(categoryID) {
-//     return post('/api/v1/category/delete', {
-//         id : categoryID
-//     })
-// }
-//
-//
-// /**
-//  *  获取笔记信息部分
-//  */
-//
-//
-// /**
-//  *  UI部分
-//  */
-//
-// // 下面是UI模板
-//
-//
-// // 下面是UI界面的处理
-//
-// function clearTagList() {
-//     document.getElementById('tag-div').innerHTML = ''
-// }
-//
-// function clearCategoryList() {
-//     document.getElementById('category-div').innerHTML = ''
-// }
-//
-// function createTagDiv() {
-//     let element = document.querySelector('#category-item')
-//     return element.content.cloneNode(true)
-// }
-//
-// function _showDialogBackgroundDiv() {
-//     document.getElementById('dialog-div').style.display = 'flex'
-// }
-//
-// function _hideDialogBackgroundDiv() {
-//     document.getElementById('dialog-div').style.display = 'none'
-// }
-//
-// function showCreateCategoryDialog() {
-//     _showDialogBackgroundDiv()
-//
-//     document.getElementById('dialog-div').append(
-//         stringTemplateToHtml(templateDialogCreateCategory({
-//
-//         }))
-//     )
-//
-//     document.getElementById('dialog-create-category-cancel').onclick = function(){
-//
-//     }
-//     document.getElementById('dialog-create-category-create').onclick = function(){
-//         alert('click')
-//     }
-// }
-//
-// /**
-//  *  通用处理函数
-//  */
-// function stringTemplateToHtml(htmlString) {
-//     return new DOMParser().parseFromString(htmlString,'text/html').body.childNodes[0]
-// }
-
 let app = new Vue({
     delimiters: ['[[', ']]'],
     el : '#app',
@@ -99,8 +9,9 @@ let app = new Vue({
         DIALOG_EDIT_CATEGORY : 1002,
         DIALOG_LOADING : 1003,
         /** 下面是控制UI相关的变量 **/
-        flag_dialog : 0,         // 是否正在显示对话框（对话框背景是否展示）
+        flag_dialog : 0,                // 是否正在显示对话框（对话框背景是否展示）
         /** 下面是控制数据相关的变量 **/
+        note_editing : null,            // 当前正在编辑的笔记，如果为null则代表正在显示列表
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
         category_list : [],             // 分类列表 对应的键有 id, name, create_time
     },
@@ -157,6 +68,70 @@ let app = new Vue({
         /** 显示创建分类对话框 **/
         show_create_category_dialog : function(category_model){
             const self = this
+            self.flag_dialog = self.DIALOG_EDIT_CATEGORY
+            // getElementByID
+            let element_title = document.getElementById('dialog-category-create-title')
+            let element_name = document.getElementById('dialog-category-create-name')
+            let element_id = document.getElementById('dialog-category-create-id')
+            let element_create_time = document.getElementById('dialog-category-create-create-time')
+            let element_btn_cancel = document.getElementById('dialog-category-create-btn-cancel')
+            let element_btn_confirm = document.getElementById('dialog-category-create-btn-confirm')
+            let element_btn_delete = document.getElementById('dialog-category-create-btn-delete')
+            // 初始化数据
+            if(category_model === undefined || category_model === null){
+                // 说明是创建分类
+                element_title.innerText = '创建分类'
+                element_name.value = ''
+                element_id.innerText = '尚未创建'
+                element_create_time.innerText = '尚未创建'
+                element_btn_delete.style.display = 'none'
+            }else{
+                // 说明是编辑分类
+                element_title.innerText = '编辑分类'
+                element_name.value = category_model.name
+                element_id.innerText = '#' + category_model.id
+                element_create_time.innerText = category_model.create_time
+                element_btn_delete.style.display = 'block'
+            }
+            // 按钮的点击事件
+            element_btn_cancel.onclick = function () {
+                self.flag_dialog = self.DIALOG_NONE
+            }
+            // 删除分类
+            element_btn_delete.onclick = function () {
+                self.show_message_dialog('删除分类', '你确定要删除"'+category_model.name+'"吗？此操作不可逆！',  async function () {
+                    self.show_loading_dialog('正在删除分类', true)
+                    let response = await post('/api/v1/category/delete', {
+                        id : category_model.id
+                    })
+                    if (response.success){
+                        self.show_success_dialog('分类 "'+category_model.name + '" 已删除', 2000)
+                        await self.refresh_category_list()
+                    }else{
+                        self.show_fail_dialog('删除失败，' + response.message, 2000)
+                    }
+                }, function () {
+                    self.close_dialog()
+                })
+            }
+            // 创建/保存 分类
+            element_btn_confirm.onclick = async function () {
+                self.show_loading_dialog('正在创建分类', true)
+                let category_name = element_name.value
+                if(!category_name || category_name.length <= 0){
+                    self.show_fail_dialog('分类名称不能为空！', 2000)
+                }else{
+                    let response = await post('/api/v1/category/add', {
+                        name : category_name
+                    })
+                    if (response.success){
+                        self.show_success_dialog('创建分类成功', 2000)
+                        await self.refresh_category_list()
+                    }else{
+                        self.show_success_dialog('创建分类失败，' + response.message, 2000)
+                    }
+                }
+            }
         },
         /** 显示创建标签对话框 **/
         show_create_tag_dialog : function (tag_model) {
@@ -187,7 +162,7 @@ let app = new Vue({
                 element_create_time.innerText = tag_model.create_time
                 element_btn_delete.style.display = 'block'
             }
-            // 按钮的点击事
+            // 按钮的点击事件
             element_btn_cancel.onclick = function () {
                 self.flag_dialog = self.DIALOG_NONE
             }
@@ -259,22 +234,35 @@ let app = new Vue({
         /* 显示加载中对话框 */
         show_loading_dialog : function(content){
             const self = this
+            document.getElementById('dialog-loading-img').className = 'animation-rotate' // 设置旋转动画
             self._show_loading_dialog('/icon/ic_loading.png', content, 0)
         },
         /* 显示成功的对话框 */
         show_success_dialog : function(content, dismiss_time){
             const self = this
+            document.getElementById('dialog-loading-img').className = '' // 取消旋转动画
             self._show_loading_dialog('/icon/ic_success.png', content, dismiss_time)
         },
         /* 显示失败的对话框 */
         show_fail_dialog : function(content, dismiss_time){
             const self = this
+            document.getElementById('dialog-loading-img').className = '' // 取消旋转动画
             self._show_loading_dialog('/icon/ic_fail.png', content, dismiss_time)
         },
         /* 关闭所有对话框 */
         close_dialog : function () {
             const self = this
             self.flag_dialog = self.DIALOG_NONE
-        }
+        },
+        /* 按下了编写新的笔记 */
+        on_write_new_note_click : function () {
+            const self = this
+            self.note_editing = {}
+        },
+        /* 按下了保存笔记按钮 */
+        on_save_note_click : function () {
+            const self = this
+            self.note_editing = null
+        },
     },
 })
