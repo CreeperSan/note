@@ -8,7 +8,18 @@ let app = new Vue({
         DIALOG_EDIT_TAG : 1001,
         DIALOG_EDIT_CATEGORY : 1002,
         DIALOG_LOADING : 1003,
+        DIALOG_NOTE_TYPE_SELECT : 1004,
         NOTE_TYPE_PLAIN_TEXT : 1,
+        /** 一些静态数据 **/
+        const_dialog_type : [{
+            type : 0,
+            name : '纯文本',
+            preview : '/img/img_note_type_plain_text.jpg'
+        },{
+            type : 1,
+            name : '选项列表',
+            preview : '/img/img_note_type_selection.jpg'
+        }],
         /** 下面是控制UI相关的变量 **/
         flag_dialog : 0,                // 是否正在显示对话框（对话框背景是否展示）
         flag_note_type : 0,             // 编辑笔记的类型
@@ -251,6 +262,10 @@ let app = new Vue({
             document.getElementById('dialog-loading-img').className = '' // 取消旋转动画
             self._show_loading_dialog('/icon/ic_fail.png', content, dismiss_time)
         },
+        show_select_note_type_dialog : function(){
+            const self = this
+            self.flag_dialog = self.DIALOG_NOTE_TYPE_SELECT
+        },
         /* 关闭所有对话框 */
         close_dialog : function () {
             const self = this
@@ -259,8 +274,7 @@ let app = new Vue({
         /* 按下了编写新的笔记 */
         on_write_new_note_click : function () {
             const self = this
-            self.flag_note_type = self.NOTE_TYPE_PLAIN_TEXT
-            self.note_editing = {}
+            self.show_select_note_type_dialog()
         },
         /* 按下了保存笔记按钮 */
         on_save_note_click : function () {

@@ -35,7 +35,7 @@
 
         .dialog-zone{ background-color: rgba(0,0,0,0.5);width: 100%;height: 100%;position: fixed;justify-content: center;align-items: center;display: flex; }
         .dialog-common-background{ background-color: white;padding: 16px 26px;border-radius: 16px; }
-        .dialog-common-title{ font-size: 1.5em;font-weight: bold; }
+        .dialog-common-title{ font-size: 1.5em;font-weight: 500; }
         .dialog-common-label-text{ display: flex;flex-wrap: wrap;padding: 8px 0; }
         .dialog-common-label-text-name{ min-width: 96px; }
         .dialog-common-label-text-input{ outline: none;border-top: none;border-left: none;border-right: none;border-bottom: solid #eee 1px; }
@@ -50,6 +50,12 @@
 
         .dialog-create-category-div{ background-color: white;border-radius: 8px;box-shadow: #00B7FF 0 0 6px;padding: 16px 16px; }
         .dialog-create-category-title{ font-size: 1.5em;font-weight: 500;color: black;margin: 0 0 8px 0; }
+
+        .dialog-select-type-dialog-content-zone{ flex-direction: row; }
+        .dialog-select-type-dialog-item-div{ justify-content: center;align-items: center;margin: 6px 12px;cursor: pointer;border: solid transparent 2px;padding: 2px;border-radius: 8px; }
+        .dialog-select-type-dialog-item-div:hover{ border: solid #f00 2px; }
+        .dialog-select-type-dialog-item-img{ width: 90px;height: 50px; }
+        .dialog-select-type-dialog-item-name{ margin-top: 6px;margin-bottom: 8px; }
 
         .dialog-message-content{ font-size: 1.2em;display: block;margin: 16px 0; }
 
@@ -251,6 +257,17 @@
             <div class="dialog-common-background" style="align-items: center;" v-show="flag_dialog === DIALOG_LOADING">
                 <img id="dialog-loading-img" class="animation-rotate" style="width: 75px;height: 75px;" src="/icon/ic_loading.png" />
                 <span id="dialog-loading-message" style="margin-top: 16px;width: 100%;">加载中</span>
+            </div>
+            <!-- 选择创建的笔记类型对话框 -->
+            <div class="dialog-common-background" style="align-items: center;" v-show="flag_dialog === DIALOG_NOTE_TYPE_SELECT">
+                <span class="dialog-common-title">请选择要创建的笔记类型</span>
+                <hr />
+                <div class="dialog-select-type-dialog-content-zone">
+                    <div class="dialog-select-type-dialog-item-div animation" v-for="item in const_dialog_type">
+                        <img class="dialog-select-type-dialog-item-img" v-bind:src="item.preview">
+                        <span class="dialog-select-type-dialog-item-name">[[ item.name ]]</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
