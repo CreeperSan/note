@@ -10,19 +10,19 @@ let app = new Vue({
         DIALOG_LOADING : 1003,
         DIALOG_NOTE_TYPE_SELECT : 1004,
         NOTE_TYPE_PLAIN_TEXT : 1,
+        NOTE_TYPE_MULTI_SELECTION : 2,
         /** 一些静态数据 **/
         const_dialog_type : [{
-            type : 0,
+            type : 1,
             name : '纯文本',
             preview : '/img/img_note_type_plain_text.jpg'
         },{
-            type : 1,
+            type : 2,
             name : '选项列表',
             preview : '/img/img_note_type_selection.jpg'
         }],
         /** 下面是控制UI相关的变量 **/
         flag_dialog : 0,                // 是否正在显示对话框（对话框背景是否展示）
-        flag_note_type : 0,             // 编辑笔记的类型
         /** 下面是控制数据相关的变量 **/
         note_editing : null,            // 当前正在编辑的笔记，如果为null则代表正在显示列表
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
@@ -276,22 +276,68 @@ let app = new Vue({
             const self = this
             self.show_select_note_type_dialog()
         },
-        /* 按下了保存笔记按钮 */
-        on_save_note_click : function () {
+        /* 指定了写哪一种类型的笔记 */
+        on_write_new_note_with_type_click : function(type){
+            const self = this
+            switch(type){
+                case self.NOTE_TYPE_PLAIN_TEXT : {
+                    self.close_dialog()
+                    self.note_editing = {
+                        type : self.NOTE_TYPE_PLAIN_TEXT
+                    }
+                    break;
+                }
+                case self.NOTE_TYPE_MULTI_SELECTION : {
+                    self.close_dialog()
+                    self.note_editing = {
+                        type : self.NOTE_TYPE_MULTI_SELECTION
+                    }
+                    break;
+                }
+            }
+        },
+        /* 按下取消 编辑/创建 笔记按钮 */
+        on_cancel_note_edit_click : function(){
             const self = this
             self.note_editing = null
-            switch (self.flag_note_type) {
+        },
+        /* 按下了保存笔记按钮 */
+        on_save_note_click : async function () {
+            const self = this
+            // 如果没有类型，则退出
+            if(
+                self.note_editing === undefined ||
+                self.note_editing === null ||
+                self.note_editing.type === undefined ||
+                self.note_editing.type === null
+            ){
+                alert('no type')
+                return
+            }
+            // 保存数据
+            switch (self.note_editing.type) {
                 // 保存为 纯文本
                 case self.NOTE_TYPE_PLAIN_TEXT:{
-                    let element_title = document.getElementById('note-title')
-                    let element_content = document.getElementById('note-text-plain-content')
+                    let element_title = document.getElementById('note-edit-text-plain-title')
+                    let element_content = document.getElementById('note-edit-text-plain-content')
                     let title_str = element_title.value
                     let content_str = element_content.value
-                    self.show_fail_dialog('保存失败', 2000)
+                    self.show_loading_dialog('正在创建笔记')
+                    let response = await post('', { // todo 发送网络请求
+
+                    })
+                    self.note_editing = null
+                    break
+                }
+                // 保存为 多选项
+                case self.NOTE_TYPE_MULTI_SELECTION:{
+                    self.note_editing = null
                     break
                 }
                 // 保存为 其他类型
                 default : {
+                    self.show_fail_dialog('未知类型', 2000)
+                    self.note_editing = null
                     break;
                 }
             }

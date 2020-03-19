@@ -73,6 +73,13 @@
         .navigation-right-div{ flex-direction: row;margin-right: 16px; }
         .navigation-right-icon{ width: 32px;height: 32px;border-radius: 100%;border: solid 1px gray; }
 
+        .note-edit-common-title-div{ flex-direction: row; }
+        .note-edit-common-title-close-img{ width: 24px;height: 24px;padding: 6px;margin-right: 12px;cursor: pointer;background-color: transparent;border-radius: 100%; }
+        .note-edit-common-title-close-img:hover{ background-color: rgba(0,0,0,0.2); }
+        .note-edit-common-title-title-input{ flex: 1; }
+
+        .note-edit-plain-text-textarea{ margin-top: 12px;height: 100%; }
+
         .animation-rotate{ animation:myRotate 1s linear infinite; }
         @keyframes myRotate{ 0%{ -webkit-transform: rotate(0deg);} 50%{ -webkit-transform: rotate(180deg);} 100%{ -webkit-transform: rotate(360deg);} }
     </style>
@@ -171,20 +178,21 @@
                 <span>asdasdsad</span>
             </div>
             <!-- 笔记编辑内容 -->
-            <div style="width: 96%;height:100%;padding: 0 2%;" v-show="note_editing">
+            <div style="width: 96%;height:100%;padding: 0 2%;" v-if="note_editing">
                 <!--  保存笔记按钮  -->
                 <div style="position: fixed;right: 26px;bottom: 26px;background-color: #6467c9;border-radius: 100%;cursor: pointer;box-shadow: gray 0 0 8px;" v-on:click="on_save_note_click()">
                     <img style="width: 30px;height: 30px;margin: 16px;" src="/icon/ic_save_white.png"/>
                 </div>
                 <!-- 输入标题 -->
-                <div style="flex-direction: row;width: 100%;height: 1.5em;margin-top: 16px;align-items: center;">
-                    <input id="note-title" style="flex: 1;" placeholder="请输入标题">
-                    <img src="/icon/ic_close.png" style="width: 16px;height: 16px;margin-left: 8px;padding: 4px;">
+                <div style="padding: 8px 4px;height: 100%;" v-show="note_editing.type === NOTE_TYPE_PLAIN_TEXT">
+                    <div class="note-edit-common-title-div">
+                        <img v-on:click="on_cancel_note_edit_click()" class="note-edit-common-title-close-img animation" src="/icon/ic_close.png"/>
+                        <input id="note-edit-text-plain-title" class="note-edit-common-title-title-input" placeholder="请输入标题" value="" />
+                    </div>
+                    <textarea id="note-edit-text-plain-content" class="note-edit-plain-text-textarea" placeholder="请输入文本内容"></textarea>
                 </div>
-                <!-- 选择类型 -->
-                <span style="font-size: 12px;">类型</span>
-                <div style="flex-direction: row;flex-wrap: wrap">
-                    <span style="border: solid black 1px;border-radius: 16px;padding: 4px 16px;cursor: pointer;">纯文本</span>
+                <div v-show="note_editing.type === NOTE_TYPE_MULTI_SELECTION">
+                    ddddddddddddddddddd
                 </div>
                 <!-- 类型 纯文本 -->
                 <div style="width: 100%;height: 100%;" v-show="flag_note_type === NOTE_TYPE_PLAIN_TEXT">
@@ -263,7 +271,7 @@
                 <span class="dialog-common-title">请选择要创建的笔记类型</span>
                 <hr />
                 <div class="dialog-select-type-dialog-content-zone">
-                    <div class="dialog-select-type-dialog-item-div animation" v-for="item in const_dialog_type">
+                    <div class="dialog-select-type-dialog-item-div animation" v-for="item in const_dialog_type" v-on:click="on_write_new_note_with_type_click(item.type)">
                         <img class="dialog-select-type-dialog-item-img" v-bind:src="item.preview">
                         <span class="dialog-select-type-dialog-item-name">[[ item.name ]]</span>
                     </div>
