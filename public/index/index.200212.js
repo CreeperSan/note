@@ -323,8 +323,10 @@ let app = new Vue({
                     let title_str = element_title.value
                     let content_str = element_content.value
                     self.show_loading_dialog('正在创建笔记')
-                    let response = await post('', { // todo 发送网络请求
-
+                    let response = await post('/api/v1/note/add/text-plain', { // todo 发送网络请求
+                        title : title_str,
+                        content : content_str,
+                        type : self.NOTE_TYPE_PLAIN_TEXT
                     })
                     self.note_editing = null
                     break

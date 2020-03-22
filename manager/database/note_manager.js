@@ -5,6 +5,8 @@
 const mysql = require('./mysql_manager')
 const log = require('../../utils/log_utils')
 const user_manager = require('./user_manager')
+const sql_utils = require('./../../utils/sql_utils')
+const params_util = require('./../../utils/param_utils')
 
 module.exports = {
     TABLE_NAME          : 'note',
@@ -18,6 +20,7 @@ module.exports = {
     KEY_TITLE           : 'title',
     KEY_ARCHIVE         : 'archive',        // 归档
     KEY_PINNED          : 'pinned',         // 置顶
+    TYPE_PLAIN_TEXT     : 1,
 
     init_table : async function (database) {
         return new Promise((resolve, reject) => {
@@ -52,6 +55,39 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+
+    add_note : function (user_id, type, title, data) {
+        return new Promise(((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+
+            let condition = {}
+
+            condition[this.KEY_USER_ID] = connection.escape(user_id)
+            condition[this.KEY_TITLE] = connection.escape(params_util.isEmpty(title) ? '' : title)
+            condition[this.KEY_TYPE] = type
+            condition[this.KEY_DATA] = connection.escape(data)
+            condition[this.KEY_ARCHIVE] = false
+            condition[this.KEY_PINNED] = false
+            condition[this.KEY_CREATE_TIME] = 'NOW()'
+            condition[this.KEY_MODIFY_TIME] = 'NOW()'
+
+            let extra = {}
+            condition[this.KEY_EXTRA] = connection.escape(JSON.stringify(extra))
+
+            const sql_query = sql_utils.insert(connection, this.TABLE_NAME, condition)
+            connection.query(sql_query, function (err, result) {
+                if (err){
+                    reject(false)
+                }else{
+                    resolve(true)
+                }
+            })
+        }))
+    },
+
+    edit_note : function () {
+
+    },
 
 }
