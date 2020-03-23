@@ -27,6 +27,7 @@ let app = new Vue({
         note_editing : null,            // 当前正在编辑的笔记，如果为null则代表正在显示列表
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
         category_list : [],             // 分类列表 对应的键有 id, name, create_time
+        note_list : [],                 // 笔记列表 对应的键有 id, name
     },
     created : function(){
         const self = this
@@ -34,6 +35,8 @@ let app = new Vue({
         this.refresh_tag_list()
         // 获取所有分类
         this.refresh_category_list()
+        // 获取所有笔记
+        this.refresh_all_note()
     },
     methods : {
         /** 刷新标签列表 **/
@@ -78,6 +81,22 @@ let app = new Vue({
                 console.log('获取分类列表失败！请重试！')
             }
         },
+        /** 刷新所有笔记 **/
+        refresh_all_note : async function(){
+            let self = this
+            let response = await post('/api/v1/note/list', {
+
+            })
+
+            if(response.success){
+                self.note_list = response.data
+            }else{
+                self.show_fail_dialog('获取所有笔记失败', 2000)
+            }
+
+            console.log(response)
+        },
+        /** 刷新 **/
         /** 显示创建分类对话框 **/
         show_create_category_dialog : function(category_model){
             const self = this

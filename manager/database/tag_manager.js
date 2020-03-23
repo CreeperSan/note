@@ -36,7 +36,7 @@ module.exports = {
                 this.KEY_EXTRA + " TEXT, " +
                 "foreign key(" + this.KEY_USER_ID + ") references " + user_manager.TABLE_NAME + "(" + user_manager.KEY_ID + ")"  +
                 ") DEFAULT CHARSET=utf8"
-    
+
             database.query(sql_query, function(err, result){
                 log.database('err')
                 log.database(JSON.stringify(err))
@@ -64,7 +64,7 @@ module.exports = {
                 if(err){
                     log.e('查询标签列表失败')
                     log.e(sql_query)
-                    reject()
+                    reject(false)
                 }else{
                     resolve(result)
                 }

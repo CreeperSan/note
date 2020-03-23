@@ -175,7 +175,9 @@
                     <img style="width: 30px;height: 30px;margin: 16px;" src="/icon/ic_pencil_white.png"/>
                 </div>
 
-                <span>asdasdsad</span>
+                <div v-for="note_item in note_list">
+                    <span>[[ note_item.title ]]</span>
+                </div>
             </div>
             <!-- 笔记编辑内容 -->
             <div style="width: 96%;height:100%;padding: 0 2%;" v-if="note_editing">
