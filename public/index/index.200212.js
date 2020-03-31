@@ -272,12 +272,18 @@ let app = new Vue({
         /* 显示成功的对话框 */
         show_success_dialog : function(content, dismiss_time){
             const self = this
+            if(dismiss_time === undefined || dismiss_time === null){
+                dismiss_time = 2000
+            }
             document.getElementById('dialog-loading-img').className = '' // 取消旋转动画
             self._show_loading_dialog('/icon/ic_success.png', content, dismiss_time)
         },
         /* 显示失败的对话框 */
         show_fail_dialog : function(content, dismiss_time){
             const self = this
+            if(dismiss_time === undefined || dismiss_time === null){
+                dismiss_time = 2000
+            }
             document.getElementById('dialog-loading-img').className = '' // 取消旋转动画
             self._show_loading_dialog('/icon/ic_fail.png', content, dismiss_time)
         },
@@ -342,12 +348,18 @@ let app = new Vue({
                     let title_str = element_title.value
                     let content_str = element_content.value
                     self.show_loading_dialog('正在创建笔记')
+                    self.note_editing = null
                     let response = await post('/api/v1/note/add/text-plain', { // todo 发送网络请求
                         title : title_str,
                         content : content_str,
                         type : self.NOTE_TYPE_PLAIN_TEXT
                     })
-                    self.note_editing = null
+                    if(response.success){
+                        self.show_success_dialog('创建笔记成功', 2000)
+                        await self.refresh_all_note()
+                    }else{
+                        self.show_fail_dialog('创建笔记失败，' + response.message, 2000)
+                    }
                     break
                 }
                 // 保存为 多选项
