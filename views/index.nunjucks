@@ -29,10 +29,7 @@
         .drawer-item-img{ width: 26px;height: 26px;margin-left: 16px; }
         .drawer-item-span{ margin-left: 8px; }
 
-        .drawer-category-div{ flex-direction: row;align-items: center;padding: 0 16px; }
         .drawer-category-subtitle{ width: 92%;font-size: 12px;color:#96842E;padding: 0 4%;margin: 8px 0;flex:1; }
-        .drawer-category-name{ width: 16px;height: 16px;padding: 2px;cursor: pointer; }
-        .drawer-category-name:hover{ background-color: #C4C8C4;border-radius: 4px; }
 
         .dialog-zone{ background-color: rgba(0,0,0,0.5);width: 100%;height: 100%;position: fixed;justify-content: center;align-items: center;display: flex; }
         .dialog-common-background{ background-color: white;padding: 16px 26px;border-radius: 16px; }
@@ -144,24 +141,6 @@
 
                 <hr />
 
-                <div class="drawer-category-div">
-                    <span class="drawer-category-subtitle">分类</span>
-                    <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
-                </div>
-                <div class="drawer-item-div" v-for="category in category_list" v-on:click="show_create_category_dialog(category)">
-                    <img class="drawer-item-img" src="/icon/ic_category.png">
-                    <span class="drawer-item-span">[[ category.name ]]</span>
-                </div>
-                <div class="drawer-item-div" v-on:click="show_create_category_dialog(null)">
-                    <img class="drawer-item-img" src="/icon/ic_add.png">
-                    <span class="drawer-item-span">添加一个新的分类</span>
-                </div>
-                <hr />
-
-                <div class="drawer-category-div">
-                    <span class="drawer-category-subtitle">标签</span>
-                    <img class="drawer-category-name animation" src="/icon/ic_refresh_gray.png"/>
-                </div>
                 <div class="drawer-item-div" v-for="tag in tag_list" v-on:click="show_create_tag_dialog(tag)">
                     <img class="drawer-item-img" src="/icon/ic_tag.png">
                     <span class="drawer-item-span">[[ tag.name ]]</span>
@@ -246,30 +225,6 @@
                     <div class="flex-space"></div>
                     <button class="dialog-common-action-button button-negative animation" id="dialog-tag-create-btn-cancel">取消</button>
                     <button class="dialog-common-action-button button-positive animation" id="dialog-tag-create-btn-confirm">确认</button>
-                </div>
-            </div>
-            <!-- 添加编辑分类对话框 -->
-            <div class="dialog-create-category-div" v-show="flag_dialog === DIALOG_EDIT_CATEGORY">
-                <span class="dialog-create-category-title" id="dialog-category-create-title">创建分类</span>
-                <hr/>
-                <label class="dialog-common-label-text">
-                    <span class="dialog-common-label-text-name">分类名称 : </span>
-                    <input class="dialog-common-label-text-input animation" id="dialog-category-create-name" type="text" placeholder="请输入分类名称" maxlength="16"/>
-                </label>
-                <label class="dialog-common-label-text">
-                    <span class="dialog-common-label-text-name">分类编号 : </span>
-                    <span id="dialog-category-create-id">#16</span>
-                </label>
-                <label class="dialog-common-label-text">
-                    <span class="dialog-common-label-text-name">创建时间 : </span>
-                    <span id="dialog-category-create-create-time">2016.06.03 14:23:10</span>
-                </label>
-                <hr/>
-                <div class="dialog-common-action-button-div">
-                    <button class="dialog-common-action-button button-warming animation"  id="dialog-category-create-btn-delete">删除</button>
-                    <div class="flex-space"></div>
-                    <button class="dialog-common-action-button button-negative animation" id="dialog-category-create-btn-cancel">取消</button>
-                    <button class="dialog-common-action-button button-positive animation" id="dialog-category-create-btn-confirm">确认</button>
                 </div>
             </div>
             <!-- 消息对话框 -->

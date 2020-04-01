@@ -6,7 +6,6 @@ let app = new Vue({
         DIALOG_NONE : 0,
         DIALOG_MESSAGE : 1000,
         DIALOG_EDIT_TAG : 1001,
-        DIALOG_EDIT_CATEGORY : 1002,
         DIALOG_LOADING : 1003,
         DIALOG_NOTE_TYPE_SELECT : 1004,
         NOTE_TYPE_PLAIN_TEXT : 1,
@@ -26,15 +25,12 @@ let app = new Vue({
         /** 下面是控制数据相关的变量 **/
         note_editing : null,            // 当前正在编辑的笔记，如果为null则代表正在显示列表
         tag_list : [],                  // 标签列表 对应的键有 id, name, create_time
-        category_list : [],             // 分类列表 对应的键有 id, name, create_time
         note_list : [],                 // 笔记列表 对应的键有 id, name
     },
     created : function(){
         const self = this
         // 获取所有标签
         this.refresh_tag_list()
-        // 获取所有分类
-        this.refresh_category_list()
         // 获取所有笔记
         this.refresh_all_note()
     },
@@ -60,27 +56,6 @@ let app = new Vue({
                 console.log('获取标签列表失败！请重试！')
             }
         },
-        /** 刷新分类列表 **/
-        refresh_category_list : async function () {
-            const self = this
-            let response = await post('/api/v1/category/list')
-            if(response.success && response.data !== undefined && response.data.list !== undefined){
-                let response_data_list = response.data.list
-                let data_list = []
-                for(let i=0; i<response_data_list.length; i++){
-                    let item = response_data_list[i]
-                    data_list.push({
-                        id : item._id,
-                        name : item.name,
-                        create_time : item.create_time,
-                    })
-                }
-                self.category_list = data_list
-                console.log(data_list)
-            }else{
-                console.log('获取分类列表失败！请重试！')
-            }
-        },
         /** 刷新所有笔记 **/
         refresh_all_note : async function(){
             let self = this
@@ -97,74 +72,6 @@ let app = new Vue({
             console.log(response)
         },
         /** 刷新 **/
-        /** 显示创建分类对话框 **/
-        show_create_category_dialog : function(category_model){
-            const self = this
-            self.flag_dialog = self.DIALOG_EDIT_CATEGORY
-            // getElementByID
-            let element_title = document.getElementById('dialog-category-create-title')
-            let element_name = document.getElementById('dialog-category-create-name')
-            let element_id = document.getElementById('dialog-category-create-id')
-            let element_create_time = document.getElementById('dialog-category-create-create-time')
-            let element_btn_cancel = document.getElementById('dialog-category-create-btn-cancel')
-            let element_btn_confirm = document.getElementById('dialog-category-create-btn-confirm')
-            let element_btn_delete = document.getElementById('dialog-category-create-btn-delete')
-            // 初始化数据
-            if(category_model === undefined || category_model === null){
-                // 说明是创建分类
-                element_title.innerText = '创建分类'
-                element_name.value = ''
-                element_id.innerText = '尚未创建'
-                element_create_time.innerText = '尚未创建'
-                element_btn_delete.style.display = 'none'
-            }else{
-                // 说明是编辑分类
-                element_title.innerText = '编辑分类'
-                element_name.value = category_model.name
-                element_id.innerText = '#' + category_model.id
-                element_create_time.innerText = category_model.create_time
-                element_btn_delete.style.display = 'block'
-            }
-            // 按钮的点击事件
-            element_btn_cancel.onclick = function () {
-                self.flag_dialog = self.DIALOG_NONE
-            }
-            // 删除分类
-            element_btn_delete.onclick = function () {
-                self.show_message_dialog('删除分类', '你确定要删除"'+category_model.name+'"吗？此操作不可逆！',  async function () {
-                    self.show_loading_dialog('正在删除分类', true)
-                    let response = await post('/api/v1/category/delete', {
-                        id : category_model.id
-                    })
-                    if (response.success){
-                        self.show_success_dialog('分类 "'+category_model.name + '" 已删除', 2000)
-                        await self.refresh_category_list()
-                    }else{
-                        self.show_fail_dialog('删除失败，' + response.message, 2000)
-                    }
-                }, function () {
-                    self.close_dialog()
-                })
-            }
-            // 创建/保存 分类
-            element_btn_confirm.onclick = async function () {
-                self.show_loading_dialog('正在创建分类', true)
-                let category_name = element_name.value
-                if(!category_name || category_name.length <= 0){
-                    self.show_fail_dialog('分类名称不能为空！', 2000)
-                }else{
-                    let response = await post('/api/v1/category/add', {
-                        name : category_name
-                    })
-                    if (response.success){
-                        self.show_success_dialog('创建分类成功', 2000)
-                        await self.refresh_category_list()
-                    }else{
-                        self.show_success_dialog('创建分类失败，' + response.message, 2000)
-                    }
-                }
-            }
-        },
         /** 显示创建标签对话框 **/
         show_create_tag_dialog : function (tag_model) {
             const self = this

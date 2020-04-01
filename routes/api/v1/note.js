@@ -10,7 +10,6 @@ router.post('/list', async (ctx, next) => {
     const user_id = ctx.headers.id
     const user_key = ctx.headers.key
     const filter_tag_id = ctx.request.body.tag
-    const filter_category_id = ctx.request.body.category
     const filter_keyword = ctx.request.body.keyword
     // 参数组成以及检查
     if(param_utils.isEmpty(user_id) || param_utils.isEmpty(user_key)){
@@ -22,7 +21,7 @@ router.post('/list', async (ctx, next) => {
         return
     }
     // 查数据库
-    let note_list = await note_manager.query_note(user_id, null, null, null)
+    let note_list = await note_manager.query_note(user_id, null, null)
     let result_note_list = []
     for(let i=0; i<note_list.length; i++){
         let note_database_item = note_list[i]

@@ -90,16 +90,13 @@ module.exports = {
 
     },
 
-    query_note : async function (user_id, tag_id, category_id, keyword) {
+    query_note : async function (user_id, tag_id, keyword) {
         return new Promise((resolve, reject) => {
             const connection = mysql.get_database_connection()
             const condition_obj = {}
             condition_obj[this.KEY_USER_ID] = user_id
             if (!params_util.isEmpty(tag_id)){
                 condition_obj[this.KEY_TAG_ID] = user_id
-            }
-            if (!params_util.isEmpty(category_id)){
-                condition_obj[this.KEY_CATEGORY_ID] = category_id
             }
             const sql_query = sql_utils.query(connection, this.TABLE_NAME, 0, 100, null, condition_obj, this.KEY_MODIFY_TIME, true)
             connection.query(sql_query, function (err, result) {

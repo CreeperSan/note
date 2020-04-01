@@ -28,11 +28,9 @@ async function _init_tables(database){
     // 此处顺序不能出错，否则见表回收失败，因为对应外键的表和字段不存在
     try{
         await require('./user_manager').init_table(database)
-        await require('./category_manager').init_table(database)
         await require('./note_manager').init_table(database)
         await require('./tag_manager').init_table(database)
         await require('./tag_note_manager').init_table(database)
-        await require('./category_note_manager').init_table(database)
     }catch(e){
         log.e(e)
         log.e('数据库初始化失败，正在退出...')
@@ -95,12 +93,6 @@ function MySQLManager(){
                         log.e('数据库启动失败, ' + e.toString())
                         process.exit(0)
                     }
-    
-                    // 测试
-                    // user_manager.add_user('asd@email.com', '5611100', 'nickname')
-                    // category_manager.create_category(1, '标签名称', '#ff66ccff', '#ff000000')
-                    // category_manager.delete_category(1, 2)
-                    // user_manager.query_user('asd@email.com', '5611100')
                 }
             })
             // 出错重连
