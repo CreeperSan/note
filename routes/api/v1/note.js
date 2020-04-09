@@ -26,7 +26,7 @@ router.post('/list', async (ctx, next) => {
     for(let i=0; i<note_list.length; i++){
         let note_database_item = note_list[i]
         result_note_list.push({
-            id : note_database_item[note_manager.KEY_USER_ID],
+            id : note_database_item[note_manager.KEY_ID],
             title : note_database_item[note_manager.KEY_TITLE],
             archive : note_database_item[note_manager.KEY_ARCHIVE],
             pinned : note_database_item[note_manager.KEY_PINNED],

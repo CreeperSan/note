@@ -59,9 +59,7 @@ let app = new Vue({
         /** 刷新所有笔记 **/
         refresh_all_note : async function(){
             let self = this
-            let response = await post('/api/v1/note/list', {
-
-            })
+            let response = await post('/api/v1/note/list', {})
 
             if(response.success){
                 self.note_list = response.data
