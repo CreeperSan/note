@@ -107,6 +107,27 @@ module.exports = {
                 }
             })
         })
+    },
+
+    delete_note : async function (user_id, note_id) {
+        return new Promise((resolve, reject) => {
+            const connection = mysql.get_database_connection()
+
+            const condition = {}
+            condition[this.KEY_USER_ID] = user_id
+            condition[this.KEY_ID] = note_id
+
+            const sql_query = sql_utils.delete(connection, this.TABLE_NAME, condition)
+
+            connection.query(sql_query, function (err, result) {
+                if (err){
+                    reject(err)
+                }else{
+                    resolve(result)
+                }
+            })
+
+        })
     }
 
 }

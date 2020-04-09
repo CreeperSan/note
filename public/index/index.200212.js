@@ -282,5 +282,24 @@ let app = new Vue({
                 }
             }
         },
+        /* 按下了删除笔记按钮 */
+        on_delete_note_click : function (note_item) {
+            const self = this
+            self.show_message_dialog('删除笔记', '您确定要删除这条笔记吗？此操作不可撤销', async function () {
+                self.show_loading_dialog('正在删除笔记')
+                let response = await post('/api/v1/note/delete', {
+                    id : note_item.id
+                })
+                if (response.success){
+                    self.show_success_dialog("笔记已删除")
+                    await self.refresh_all_note() // 刷新笔记列表
+                }else{
+                    self.show_fail_dialog("笔记删除失败")
+                }
+            }, function () {
+                self.close_dialog()
+            })
+            console.log(note_item)
+        }
     },
 })

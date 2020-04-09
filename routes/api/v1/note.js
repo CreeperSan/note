@@ -72,7 +72,28 @@ router.post('/add/text-plain', async (ctx, next) => {
 })
 
 router.post('/delete', async (ctx, next) => {
-
+    // 获取参数
+    const user_id = ctx.headers.id
+    const user_key = ctx.headers.key
+    const note_id = ctx.request.body.id
+    // 检查Key是否过期
+    if(param_utils.isEmpty(user_id) || param_utils.isEmpty(user_key)){
+        ctx.body = response.auth_error('尚未登陆，请先登录')
+        return
+    }
+    if (!auth_manager.is_auth(user_id, user_key)){
+        ctx.body = response.auth_error('登录信息过期，请重新登录')
+        return
+    }
+    // 检查是否自己的日志
+    // TODO
+    // 删除
+    let result = await note_manager.delete_note(user_id, note_id)
+    if (result){
+        ctx.body = response.success()
+    }else{
+        ctx.body = response.error_params(result.toString())
+    }
 })
 
 

@@ -175,7 +175,7 @@
                         <img class="note-item-common-bottom-icon animation" src="/icon/ic_archive.png"/>
                         <img class="note-item-common-bottom-icon animation" src="/icon/ic_color.png"/>
                         <div class="note-item-common-bottom-space"></div>
-                        <img class="note-item-common-bottom-icon animation" src="/icon/ic_delete.png"/>
+                        <img class="note-item-common-bottom-icon animation" v-on:click="on_delete_note_click(note_item)" src="/icon/ic_delete.png"/>
                     </div>
                 </div>
 
